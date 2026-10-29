@@ -11,6 +11,7 @@ import { NetworkModal } from './components/Modals/NetworkModal';
 import { SearchModal } from './components/Modals/SearchModal';
 import { PromptModal } from './components/Modals/PromptModal';
 import { ConfirmModal } from './components/Modals/ConfirmModal';
+import { GraphModal } from './components/Graph/GraphModal';
 
 import { useTheme } from './hooks/useTheme';
 import { useWebSocket } from './hooks/useWebSocket';
@@ -32,9 +33,13 @@ export function App() {
   // Network & Sharing info
   const [networkInfo, setNetworkInfo] = useState(null);
 
+  // Graph Data
+  const [graphData, setGraphData] = useState({ nodes: [], links: [] });
+
   // Modals state
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isGraphModalOpen, setIsGraphModalOpen] = useState(false);
   const [promptConfig, setPromptConfig] = useState(null);
   const [confirmConfig, setConfirmConfig] = useState(null);
 
@@ -46,6 +51,16 @@ export function App() {
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, duration);
+  }, []);
+
+  // Fetch graph data
+  const loadGraphData = useCallback(async () => {
+    try {
+      const data = await api.fetchGraphData();
+      setGraphData(data);
+    } catch (err) {
+      console.error('Failed to load graph data:', err);
+    }
   }, []);
 
   // WebSocket callbacks
@@ -63,19 +78,24 @@ export function App() {
       }
     }
     vault.loadTree();
-  }, [showToast]);
+    loadGraphData();
+  }, [loadGraphData, showToast]);
 
   const handleExternalVaultChange = useCallback((data) => {
     vault.loadTree();
+    loadGraphData();
     if (activeNoteRef.current && activeNoteRef.current.path === data.path && !isDirtyRef.current) {
       vault.openNote(data.path);
       showToast('Updated from disk change');
     }
-  }, [showToast]);
+  }, [loadGraphData, showToast]);
 
   const { peerCount, clientId } = useWebSocket({
     onNoteSaved: handleRemoteNoteSaved,
-    onTreeChanged: () => vault.loadTree(),
+    onTreeChanged: () => {
+      vault.loadTree();
+      loadGraphData();
+    },
     onExternalChange: handleExternalVaultChange,
   });
 
@@ -89,7 +109,7 @@ export function App() {
     isDirtyRef.current = vault.isDirty;
   }, [vault.activeNote, vault.isDirty]);
 
-  // Fetch initial network info
+  // Fetch initial network info & graph data
   const loadNetworkInfo = useCallback(async () => {
     try {
       const data = await api.fetchNetworkInfo();
@@ -101,7 +121,13 @@ export function App() {
 
   useEffect(() => {
     loadNetworkInfo();
-  }, [loadNetworkInfo]);
+    loadGraphData();
+  }, [loadNetworkInfo, loadGraphData]);
+
+  // Reload graph when vault tree changes
+  useEffect(() => {
+    loadGraphData();
+  }, [vault.tree, loadGraphData]);
 
   // Handle window resize
   useEffect(() => {
@@ -126,12 +152,16 @@ export function App() {
   const closeAllModals = useCallback(() => {
     setIsNetworkModalOpen(false);
     setIsSearchModalOpen(false);
+    setIsGraphModalOpen(false);
     setPromptConfig(null);
     setConfirmConfig(null);
   }, []);
 
   useKeyboardShortcuts({
-    onSave: vault.forceSave,
+    onSave: async () => {
+      await vault.forceSave();
+      loadGraphData();
+    },
     onSearch: () => setIsSearchModalOpen(true),
     onNewNote: () => {
       setPromptConfig({
@@ -139,7 +169,10 @@ export function App() {
         label: 'Note title:',
         defaultValue: '',
         confirmLabel: 'Create',
-        onConfirm: (val) => vault.createNote('', val),
+        onConfirm: async (val) => {
+          await vault.createNote('', val);
+          loadGraphData();
+        },
       });
     },
     onToggleMode: () => {
@@ -194,7 +227,10 @@ export function App() {
         label: `Create new note "${targetName}"?`,
         defaultValue: targetName,
         confirmLabel: 'Create & Open',
-        onConfirm: (name) => vault.createNote('', name),
+        onConfirm: async (name) => {
+          await vault.createNote('', name);
+          loadGraphData();
+        },
       });
     }
   };
@@ -219,6 +255,10 @@ export function App() {
           loadNetworkInfo();
           setIsNetworkModalOpen(true);
         }}
+        onOpenGraphModal={() => {
+          loadGraphData();
+          setIsGraphModalOpen(true);
+        }}
       />
 
       <div className="workspace-container">
@@ -239,7 +279,10 @@ export function App() {
               label: 'Note title:',
               defaultValue: '',
               confirmLabel: 'Create',
-              onConfirm: (val) => vault.createNote(inFolder, val),
+              onConfirm: async (val) => {
+                await vault.createNote(inFolder, val);
+                loadGraphData();
+              },
             });
           }}
           onNewFolder={(inFolder) => {
@@ -253,6 +296,7 @@ export function App() {
           }}
           onRefreshTree={async () => {
             await vault.loadTree();
+            await loadGraphData();
             showToast('File tree refreshed');
           }}
           onOpenSearch={() => setIsSearchModalOpen(true)}
@@ -265,7 +309,10 @@ export function App() {
             setConfirmConfig({
               title: `Delete ${isDirectory ? 'Folder' : 'Note'}`,
               message: `Are you sure you want to delete this ${itemType}: "${itemPath}"?`,
-              onConfirm: () => vault.deleteItem(itemPath, isDirectory),
+              onConfirm: async () => {
+                await vault.deleteItem(itemPath, isDirectory);
+                loadGraphData();
+              },
             });
           }}
         />
@@ -287,8 +334,14 @@ export function App() {
               <EditorPane
                 activeNote={vault.activeNote}
                 onContentChange={vault.handleContentChange}
-                onTitleRename={vault.renameActiveNote}
-                onForceSave={vault.forceSave}
+                onTitleRename={async (val) => {
+                  await vault.renameActiveNote(val);
+                  loadGraphData();
+                }}
+                onForceSave={async () => {
+                  await vault.forceSave();
+                  loadGraphData();
+                }}
               />
             </div>
 
@@ -307,9 +360,15 @@ export function App() {
             >
               <PreviewPane
                 activeNote={vault.activeNote}
+                graphData={graphData}
+                isDark={theme === 'dark'}
                 onToggleCheckbox={vault.toggleCheckbox}
                 onWikilinkClick={handleWikilinkClick}
                 onSelectNote={vault.openNote}
+                onOpenGlobalGraph={() => {
+                  loadGraphData();
+                  setIsGraphModalOpen(true);
+                }}
               />
             </div>
           </div>
@@ -345,6 +404,15 @@ export function App() {
         onClose={() => setIsSearchModalOpen(false)}
         tree={vault.tree}
         onSelectNote={vault.openNote}
+      />
+
+      <GraphModal
+        isOpen={isGraphModalOpen}
+        onClose={() => setIsGraphModalOpen(false)}
+        graphData={graphData}
+        activePath={vault.activeNote?.path}
+        onSelectNote={vault.openNote}
+        isDark={theme === 'dark'}
       />
 
       {promptConfig && (

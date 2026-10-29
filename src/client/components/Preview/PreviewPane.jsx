@@ -1,14 +1,21 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { renderMarkdown, enhanceRenderedContent } from '../../utils/markdown';
 import { Backlinks } from './Backlinks';
+import { LocalGraph } from '../Graph/LocalGraph';
+import { HoverPreview } from './HoverPreview';
 
 export function PreviewPane({
   activeNote,
+  graphData,
+  isDark = true,
   onToggleCheckbox,
   onWikilinkClick,
   onSelectNote,
+  onOpenGlobalGraph,
 }) {
   const contentRef = useRef(null);
+  const [hoverTarget, setHoverTarget] = useState(null);
+  const hoverTimeoutRef = useRef(null);
 
   const renderedHtml = useMemo(() => {
     return renderMarkdown(activeNote?.content || '');
@@ -19,6 +26,19 @@ export function PreviewPane({
       enhanceRenderedContent(contentRef.current);
     }
   }, [renderedHtml]);
+
+  // Lookup map for fast target resolution
+  const targetMap = useMemo(() => {
+    const map = new Map();
+    if (graphData?.nodes) {
+      for (const node of graphData.nodes) {
+        map.set(node.title.toLowerCase(), node.path);
+        map.set(node.path.toLowerCase(), node.path);
+        map.set(node.path.replace(/\.md$/i, '').toLowerCase(), node.path);
+      }
+    }
+    return map;
+  }, [graphData]);
 
   const handleClick = (e) => {
     // 1. Task checkbox toggle
@@ -35,12 +55,34 @@ export function PreviewPane({
     if (wikilink) {
       e.preventDefault();
       const targetNote = wikilink.dataset.target;
+      setHoverTarget(null);
       onWikilinkClick?.(targetNote);
     }
   };
 
+  // Hover detection on wikilinks
+  const handleMouseMove = (e) => {
+    const wikilink = e.target.closest('.wikilink');
+    if (wikilink) {
+      clearTimeout(hoverTimeoutRef.current);
+      const raw = (wikilink.dataset.target || '').trim().toLowerCase();
+      const resolvedPath = targetMap.get(raw);
+      if (resolvedPath) {
+        setHoverTarget({
+          path: resolvedPath,
+          position: { x: e.clientX, y: e.clientY },
+        });
+      }
+    } else if (!e.target.closest('.node-hover-preview')) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = setTimeout(() => {
+        setHoverTarget(null);
+      }, 150);
+    }
+  };
+
   return (
-    <div className="preview-pane">
+    <div className="preview-pane" onMouseMove={handleMouseMove}>
       <div
         ref={contentRef}
         className="preview-content markdown-body"
@@ -48,10 +90,33 @@ export function PreviewPane({
         dangerouslySetInnerHTML={{ __html: renderedHtml }}
       />
 
+      {/* Local Graph Node View */}
+      <LocalGraph
+        graphData={graphData}
+        activePath={activeNote?.path}
+        onSelectNote={onSelectNote}
+        onOpenGlobalGraph={onOpenGlobalGraph}
+        isDark={isDark}
+      />
+
+      {/* Backlinks */}
       <Backlinks
         backlinks={activeNote?.backlinks || []}
         onSelectNote={onSelectNote}
       />
+
+      {/* Hover preview card */}
+      {hoverTarget && (
+        <HoverPreview
+          targetPath={hoverTarget.path}
+          position={hoverTarget.position}
+          onClose={() => setHoverTarget(null)}
+          onSelectNote={(path) => {
+            setHoverTarget(null);
+            onSelectNote(path);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ function createVaultRouter(vaultController) {
   const router = express.Router();
 
   router.get('/tree', vaultController.getTree);
+  router.get('/graph', vaultController.getGraph);
   router.get('/file', vaultController.getFile);
   router.post('/file', vaultController.saveFile);
   router.delete('/file', vaultController.deleteFile);

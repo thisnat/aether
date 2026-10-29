@@ -2,9 +2,10 @@ const path = require('path');
 const chokidar = require('chokidar');
 
 class WatcherService {
-  constructor(vaultPath, wsService) {
+  constructor(vaultPath, wsService, vaultService = null) {
     this.vaultPath = vaultPath;
     this.wsService = wsService;
+    this.vaultService = vaultService;
     this.debounceTimer = null;
     this.watcher = null;
 
@@ -19,6 +20,10 @@ class WatcherService {
     });
 
     const scheduleBroadcast = (eventType, changedPath) => {
+      if (this.vaultService) {
+        this.vaultService.invalidateCache();
+      }
+
       clearTimeout(this.debounceTimer);
       this.debounceTimer = setTimeout(() => {
         const rel = path.relative(this.vaultPath, changedPath).split(path.sep).join('/');

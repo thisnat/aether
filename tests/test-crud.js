@@ -66,7 +66,14 @@ async function waitForServer(maxAttempts = 30) {
     });
     console.log('Created note:', createRes.body.title);
 
-    console.log('3. Fetching tree...');
+    console.log('3. Fetching graph data & references...');
+    const graphRes = await req('GET', '/api/vault/graph');
+    console.log('Graph nodes:', graphRes.body.nodes.length, 'Graph links:', graphRes.body.links.length);
+    if (!graphRes.body.nodes.some(n => n.title === 'Live Note')) {
+      throw new Error('Graph did not include Live Note');
+    }
+
+    console.log('4. Fetching tree...');
     const treeRes = await req('GET', '/api/vault/tree');
     console.log('Tree items:', treeRes.body.tree.map((t) => t.name));
 

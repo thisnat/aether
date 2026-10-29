@@ -4,9 +4,15 @@ const path = require('path');
 class VaultService {
   constructor(vaultDir) {
     this.vaultDir = path.resolve(vaultDir);
+    this._graphCache = null;
+
     if (!fs.existsSync(this.vaultDir)) {
       fs.mkdirSync(this.vaultDir, { recursive: true });
     }
+  }
+
+  invalidateCache() {
+    this._graphCache = null;
   }
 
   /**
@@ -131,6 +137,8 @@ class VaultService {
     await fs.promises.writeFile(fullPath, content, 'utf-8');
     const stats = await fs.promises.stat(fullPath);
 
+    this.invalidateCache();
+
     return {
       path: safeRel,
       name: path.basename(safeRel),
@@ -146,6 +154,7 @@ class VaultService {
   async createDirectory(relativePath) {
     const { fullPath, relativePath: safeRel } = this.resolveSafe(relativePath);
     await fs.promises.mkdir(fullPath, { recursive: true });
+    this.invalidateCache();
     return { path: safeRel };
   }
 
@@ -165,6 +174,8 @@ class VaultService {
     } else {
       await fs.promises.unlink(fullPath);
     }
+
+    this.invalidateCache();
 
     return { deleted: safeRel };
   }
@@ -198,6 +209,8 @@ class VaultService {
     }
 
     await fs.promises.rename(oldResolved.fullPath, newResolved.fullPath);
+
+    this.invalidateCache();
 
     return {
       oldPath: oldResolved.relativePath,
@@ -307,6 +320,104 @@ class VaultService {
     }
 
     return backlinks;
+  }
+
+  /**
+   * High-Performance Graph Data Extraction with in-memory caching.
+   * Extracts all notes as nodes and [[wikilinks]] as directed edges.
+   */
+  async getGraphData() {
+    if (this._graphCache) {
+      return this._graphCache;
+    }
+
+    const files = new Map();
+    const titleToPath = new Map();
+
+    const scan = async (dirRel = '') => {
+      const { fullPath } = this.resolveSafe(dirRel);
+      if (!fs.existsSync(fullPath)) return;
+
+      const entries = await fs.promises.readdir(fullPath, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (entry.name.startsWith('.')) continue;
+
+        const entryRel = dirRel ? `${dirRel}/${entry.name}` : entry.name;
+        const entryFull = path.join(fullPath, entry.name);
+
+        if (entry.isDirectory()) {
+          await scan(entryRel);
+        } else if (entry.isFile() && entry.name.endsWith('.md')) {
+          const content = await fs.promises.readFile(entryFull, 'utf-8');
+          const stats = await fs.promises.stat(entryFull);
+          const title = entry.name.replace(/\.md$/i, '');
+
+          files.set(entryRel, {
+            path: entryRel,
+            title,
+            size: stats.size,
+            mtime: stats.mtime,
+            content,
+            inDegree: 0,
+            outDegree: 0,
+          });
+
+          // Index by title (case-insensitive) and relative path without extension
+          titleToPath.set(title.toLowerCase(), entryRel);
+          titleToPath.set(entryRel.replace(/\.md$/i, '').toLowerCase(), entryRel);
+        }
+      }
+    };
+
+    await scan();
+
+    const links = [];
+    const linkSet = new Set();
+    const wikilinkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
+
+    for (const [sourcePath, file] of files.entries()) {
+      let match;
+      while ((match = wikilinkRegex.exec(file.content)) !== null) {
+        const rawTarget = match[1].trim().toLowerCase();
+        // Resolve target path from map
+        const targetPath = titleToPath.get(rawTarget) ||
+          titleToPath.get(path.basename(rawTarget, '.md').toLowerCase());
+
+        if (targetPath && targetPath !== sourcePath) {
+          const linkKey = `${sourcePath}->${targetPath}`;
+          if (!linkSet.has(linkKey)) {
+            linkSet.add(linkKey);
+            links.push({
+              source: sourcePath,
+              target: targetPath,
+            });
+
+            file.outDegree++;
+            const targetFile = files.get(targetPath);
+            if (targetFile) {
+              targetFile.inDegree++;
+            }
+          }
+        }
+      }
+    }
+
+    const nodes = Array.from(files.values()).map(file => {
+      const connections = file.inDegree + file.outDegree;
+      return {
+        id: file.path,
+        path: file.path,
+        title: file.title,
+        size: file.size,
+        inDegree: file.inDegree,
+        outDegree: file.outDegree,
+        val: Math.max(5, Math.min(18, 5 + connections * 2)),
+      };
+    });
+
+    this._graphCache = { nodes, links };
+    return this._graphCache;
   }
 }
 

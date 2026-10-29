@@ -1,5 +1,5 @@
 import React from 'react';
-import { PanelLeft, Share2, Sun, Moon } from 'lucide-react';
+import { PanelLeft, Share2, Sun, Moon, GitFork } from 'lucide-react';
 import { ModeSwitcher } from './ModeSwitcher';
 
 export function Topbar({
@@ -11,6 +11,7 @@ export function Topbar({
   onToggleTheme,
   onToggleSidebar,
   onOpenNetworkModal,
+  onOpenGraphModal,
 }) {
   return (
     <header className="topbar">
@@ -43,6 +44,15 @@ export function Topbar({
       </div>
 
       <div className="topbar-right">
+        <button
+          type="button"
+          className="icon-btn"
+          onClick={onOpenGraphModal}
+          title="Open Graph View (Nodes)"
+        >
+          <GitFork size={17} />
+        </button>
+
         <button
           type="button"
           className="peer-badge"

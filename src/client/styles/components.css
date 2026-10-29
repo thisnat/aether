@@ -895,3 +895,217 @@
     display: none;
   }
 }
+
+/* ========================================================
+   OBSIDIAN-STYLE NODE PREVIEWS & GRAPH VIEW
+   ======================================================== */
+
+/* Floating Page / Node Hover Preview Card */
+.node-hover-preview {
+  position: fixed;
+  width: 290px;
+  max-width: 90vw;
+  background: var(--bg-card);
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 12px 14px;
+  z-index: 1000;
+  cursor: pointer;
+  pointer-events: auto;
+  animation: fadeInFast 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  backdrop-filter: blur(8px);
+}
+
+@keyframes fadeInFast {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.preview-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+}
+
+.preview-card-title {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.preview-card-jump {
+  color: var(--text-dim);
+}
+
+.preview-card-path {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.preview-card-body {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  background: var(--bg-app);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  max-height: 90px;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding-top: 4px;
+  border-top: 1px solid var(--border-color);
+}
+
+.preview-card-hint {
+  color: var(--accent);
+}
+
+/* Local Graph Container inside Note */
+.local-graph-container {
+  margin-top: 24px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.local-graph-header {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.local-graph-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.local-graph-expand-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-sidebar-hover);
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.local-graph-expand-btn:hover {
+  color: var(--text-main);
+  background: var(--border-focus);
+}
+
+.local-graph-canvas-wrapper {
+  background: var(--bg-app);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Global Graph Modal Card */
+.graph-modal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-lg);
+  width: 92vw;
+  max-width: 960px;
+  height: 82vh;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.graph-modal-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.graph-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.graph-stats-badge {
+  font-size: 11px;
+  font-weight: normal;
+  padding: 2px 8px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 20px;
+}
+
+.graph-filter-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  flex: 1;
+  max-width: 280px;
+}
+
+.graph-filter-box input {
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  width: 100%;
+}
+
+.graph-modal-canvas-container {
+  flex: 1;
+  position: relative;
+  background: var(--bg-app);
+  overflow: hidden;
+}
+
+.graph-modal-footer {
+  padding: 10px 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.graph-active-label strong {
+  color: var(--accent);
+}

@@ -120,6 +120,15 @@ class VaultController {
     }
   };
 
+  getGraph = async (req, res) => {
+    try {
+      const graph = await this.vault.getGraphData();
+      res.json(graph);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
   searchNotes = async (req, res) => {
     try {
       const query = req.query.q || '';

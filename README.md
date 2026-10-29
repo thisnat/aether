@@ -13,9 +13,11 @@
   - Real-time synchronization across phones, tablets, and computers on the same Wi-Fi using WebSockets.
   - Live active peer counter (know how many devices are connected).
 
-- **📝 100% Obsidian Compatible**
+- **📝 100% Obsidian Compatible & Node Graph View**
   - All notes are saved directly as standard `.md` files in the `./vault` directory on disk.
   - External changes (from Obsidian, VS Code, or file manager) are auto-detected via `chokidar` and live-reloaded.
+  - **Interactive Node Graph View**: Hardware-accelerated 2D Canvas force-directed graph with zero-idle CPU overhead. Visualizes all interconnected documents as glowing nodes and references as link edges.
+  - **Local Graph & Hover Preview**: Inline local graph showing immediate references for the active document, plus floating hover preview cards when hovering over `[[Wikilinks]]` or graph nodes.
   - **Internal Wikilinks**: Link notes using double brackets like `[[Quick Start]]` or `[[Projects/Ideas]]`. If a linked note doesn't exist yet, click it to create it on the spot.
   - **Interactive Checklists**: `- [ ]` and `- [x]` can be checked or unchecked directly inside the rendered preview, updating the raw markdown file automatically.
   - **Backlinks (Linked References)**: Automatically detects and displays other notes that link to the current note.

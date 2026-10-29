@@ -21,7 +21,7 @@ function startServer() {
 
   const server = http.createServer();
   const wsService = new WebSocketService(server);
-  const watcherService = new WatcherService(config.vaultPath, wsService);
+  const watcherService = new WatcherService(config.vaultPath, wsService, vaultService);
 
   // Controllers
   const vaultController = new VaultController(vaultService, wsService);

@@ -14,6 +14,12 @@ export async function fetchVaultTree() {
   return res.json();
 }
 
+export async function fetchGraphData() {
+  const res = await fetch('/api/vault/graph');
+  if (!res.ok) throw new Error('Failed to fetch graph data');
+  return res.json();
+}
+
 export async function fetchNote(filePath) {
   const res = await fetch(`/api/vault/file?path=${encodeURIComponent(filePath)}`);
   if (!res.ok) throw new Error('Failed to load note');
