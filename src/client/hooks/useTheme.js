@@ -11,12 +11,13 @@ export function useTheme() {
 
     const themeLink = document.getElementById('highlight-theme');
     if (themeLink) {
-      themeLink.href = theme === 'light' ? '/vendor/highlight-light.css' : '/vendor/highlight-dark.css';
+      themeLink.href =
+        theme === 'light' ? '/vendor/highlight-light.css' : '/vendor/highlight-dark.css';
     }
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   return { theme, toggleTheme };

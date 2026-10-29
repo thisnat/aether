@@ -23,7 +23,9 @@ export function NetworkModal({ isOpen, onClose, networkInfo, peerCount }) {
             </div>
             <div>
               <h3>Local Network Sharing</h3>
-              <p className="modal-subtitle">Connect any phone, tablet, or PC on this Wi-Fi network</p>
+              <p className="modal-subtitle">
+                Connect any phone, tablet, or PC on this Wi-Fi network
+              </p>
             </div>
           </div>
           <button type="button" className="modal-close-btn" onClick={onClose}>
@@ -37,7 +39,15 @@ export function NetworkModal({ isOpen, onClose, networkInfo, peerCount }) {
               {networkInfo?.qrDataUrl ? (
                 <img src={networkInfo.qrDataUrl} alt="Network QR code" />
               ) : (
-                <div style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div
+                  style={{
+                    width: 140,
+                    height: 140,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   Loading...
                 </div>
               )}
@@ -46,7 +56,9 @@ export function NetworkModal({ isOpen, onClose, networkInfo, peerCount }) {
             <div className="qr-instructions">
               <div className="instruction-step">
                 <span className="step-num">1</span>
-                <span>Connect your phone to the <strong>same Wi-Fi</strong></span>
+                <span>
+                  Connect your phone to the <strong>same Wi-Fi</strong>
+                </span>
               </div>
               <div className="instruction-step">
                 <span className="step-num">2</span>
@@ -77,7 +89,9 @@ export function NetworkModal({ isOpen, onClose, networkInfo, peerCount }) {
             </div>
             <div>
               <span className="stat-label">Connected Peers</span>
-              <span>{peerCount} device{peerCount === 1 ? '' : 's'}</span>
+              <span>
+                {peerCount} device{peerCount === 1 ? '' : 's'}
+              </span>
             </div>
           </div>
         </div>

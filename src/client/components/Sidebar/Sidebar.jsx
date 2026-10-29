@@ -19,19 +19,16 @@ export function Sidebar({
 }) {
   return (
     <>
-      <aside className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
+      <aside
+        className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}
+      >
         {/* Mobile Sidebar Top Row */}
         <div className="sidebar-mobile-nav">
           <div className="brand">
             <span className="brand-glyph">▲</span>
             <span className="brand-title">Aether</span>
           </div>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={onCloseMobile}
-            title="Close Sidebar"
-          >
+          <button type="button" className="icon-btn" onClick={onCloseMobile} title="Close Sidebar">
             <X size={18} />
           </button>
         </div>
@@ -105,10 +102,7 @@ export function Sidebar({
       </aside>
 
       {/* Backdrop for mobile */}
-      <div
-        className={`sidebar-backdrop ${mobileOpen ? 'active' : ''}`}
-        onClick={onCloseMobile}
-      />
+      <div className={`sidebar-backdrop ${mobileOpen ? 'active' : ''}`} onClick={onCloseMobile} />
     </>
   );
 }

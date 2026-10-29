@@ -12,7 +12,8 @@ export function HoverPreview({ targetPath, position, onClose, onSelectNote }) {
     let isMounted = true;
     setLoading(true);
 
-    api.fetchNote(targetPath)
+    api
+      .fetchNote(targetPath)
       .then((data) => {
         if (!isMounted) return;
         // Clean snippet: strip leading markdown headers/symbols for cleaner card preview
@@ -62,16 +63,15 @@ export function HoverPreview({ targetPath, position, onClose, onSelectNote }) {
       <div className="preview-card-path">{targetPath}</div>
 
       <div className="preview-card-body">
-        {loading ? (
-          <span className="muted">Loading preview...</span>
-        ) : (
-          previewData?.snippet
-        )}
+        {loading ? <span className="muted">Loading preview...</span> : previewData?.snippet}
       </div>
 
       {previewData && (
         <div className="preview-card-footer">
-          <span>{previewData.backlinksCount} linked reference{previewData.backlinksCount === 1 ? '' : 's'}</span>
+          <span>
+            {previewData.backlinksCount} linked reference
+            {previewData.backlinksCount === 1 ? '' : 's'}
+          </span>
           <span className="preview-card-hint">Click to open</span>
         </div>
       )}

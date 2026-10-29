@@ -21,10 +21,11 @@ function getNetworkAddresses() {
   }
 
   // Find the most likely primary LAN IP (e.g. 192.168.x.x, 10.x.x.x, 172.x.x.x)
-  let primary = addresses.find(a =>
-    a.address.startsWith('192.168.') ||
-    a.address.startsWith('10.') ||
-    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(a.address)
+  let primary = addresses.find(
+    (a) =>
+      a.address.startsWith('192.168.') ||
+      a.address.startsWith('10.') ||
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(a.address)
   );
 
   if (!primary && addresses.length > 0) {

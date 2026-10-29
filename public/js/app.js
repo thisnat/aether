@@ -12,7 +12,8 @@ class AetherApp {
     this.activeNote = null;
     this.vaultTree = [];
     this.networkInfo = null;
-    this.viewMode = localStorage.getItem('aether_mode') || (window.innerWidth <= 768 ? 'edit' : 'split');
+    this.viewMode =
+      localStorage.getItem('aether_mode') || (window.innerWidth <= 768 ? 'edit' : 'split');
     this.theme = localStorage.getItem('aether_theme') || 'dark';
 
     // Subsystems
@@ -258,7 +259,8 @@ class AetherApp {
     container.innerHTML = '';
 
     if (!nodes || nodes.length === 0) {
-      container.innerHTML = '<div class="tree-empty">Vault is empty.<br>Click "+ Note" to create one.</div>';
+      container.innerHTML =
+        '<div class="tree-empty">Vault is empty.<br>Click "+ Note" to create one.</div>';
       return;
     }
 
@@ -484,12 +486,16 @@ class AetherApp {
 
     this.backlinksContainer.style.display = 'block';
     this.backlinksCount.textContent = backlinks.length;
-    this.backlinksList.innerHTML = backlinks.map(b => `
+    this.backlinksList.innerHTML = backlinks
+      .map(
+        (b) => `
       <a class="backlink-item" data-path="${escapeHtml(b.path)}">
         <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
         <span>${escapeHtml(b.title)}</span>
       </a>
-    `).join('');
+    `
+      )
+      .join('');
 
     this.backlinksList.querySelectorAll('.backlink-item').forEach((item) => {
       item.addEventListener('click', () => {
@@ -605,7 +611,10 @@ class AetherApp {
           if (!res.ok) throw new Error('Deletion failed');
           this.showToast(`Deleted ${itemPath}`);
 
-          if (this.activeNote && (this.activeNote.path === itemPath || this.activeNote.path.startsWith(itemPath + '/'))) {
+          if (
+            this.activeNote &&
+            (this.activeNote.path === itemPath || this.activeNote.path.startsWith(itemPath + '/'))
+          ) {
             this.activeNote = null;
             this.noteTitleInput.value = '';
             this.editor.setValue('', true);
@@ -662,7 +671,9 @@ class AetherApp {
         this.setSavingState('saved');
         this.showToast(`Note updated by peer device`);
       } else {
-        this.showToast(`⚠️ Conflict warning: Remote edit received for "${data.title}" while editing`);
+        this.showToast(
+          `⚠️ Conflict warning: Remote edit received for "${data.title}" while editing`
+        );
       }
     }
     this.loadTree();
@@ -705,10 +716,12 @@ class AetherApp {
     if (fabText && fabIcon) {
       if (mode === 'edit') {
         fabText.textContent = 'Preview';
-        fabIcon.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        fabIcon.innerHTML =
+          '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
       } else {
         fabText.textContent = 'Edit';
-        fabIcon.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>';
+        fabIcon.innerHTML =
+          '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>';
       }
     }
   }
@@ -726,7 +739,8 @@ class AetherApp {
     // Swap highlight theme stylesheet
     const themeLink = document.getElementById('highlight-theme');
     if (themeLink) {
-      themeLink.href = theme === 'light' ? '/vendor/highlight-light.css' : '/vendor/highlight-dark.css';
+      themeLink.href =
+        theme === 'light' ? '/vendor/highlight-light.css' : '/vendor/highlight-dark.css';
     }
   }
 
@@ -832,7 +846,7 @@ class AetherApp {
     if (!query) {
       // List all notes when search box is empty
       const flatNotes = this.flattenTreeFiles(this.vaultTree);
-      this.currentResults = flatNotes.map(n => ({
+      this.currentResults = flatNotes.map((n) => ({
         path: n.path,
         title: n.title,
         titleMatch: true,
@@ -859,13 +873,15 @@ class AetherApp {
       return;
     }
 
-    this.searchResultsList.innerHTML = this.currentResults.map((item, idx) => {
-      const isSelected = idx === this.selectedSearchIndex;
-      const snippet = item.matches && item.matches.length > 0
-        ? `<div class="search-result-snippet">Line ${item.matches[0].lineNumber}: ${escapeHtml(item.matches[0].line)}</div>`
-        : '';
+    this.searchResultsList.innerHTML = this.currentResults
+      .map((item, idx) => {
+        const isSelected = idx === this.selectedSearchIndex;
+        const snippet =
+          item.matches && item.matches.length > 0
+            ? `<div class="search-result-snippet">Line ${item.matches[0].lineNumber}: ${escapeHtml(item.matches[0].line)}</div>`
+            : '';
 
-      return `
+        return `
         <div class="search-result-item ${isSelected ? 'selected' : ''}" data-idx="${idx}" data-path="${escapeHtml(item.path)}">
           <div class="search-result-title">
             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
@@ -875,7 +891,8 @@ class AetherApp {
           ${snippet}
         </div>
       `;
-    }).join('');
+      })
+      .join('');
 
     this.searchResultsList.querySelectorAll('.search-result-item').forEach((el) => {
       el.addEventListener('click', () => {
@@ -888,8 +905,9 @@ class AetherApp {
 
   moveSearchSelection(dir) {
     if (this.currentResults.length === 0) return;
-    this.selectedSearchIndex = (this.selectedSearchIndex + dir + this.currentResults.length) % this.currentResults.length;
-    
+    this.selectedSearchIndex =
+      (this.selectedSearchIndex + dir + this.currentResults.length) % this.currentResults.length;
+
     const items = this.searchResultsList.querySelectorAll('.search-result-item');
     items.forEach((it, idx) => {
       it.classList.toggle('selected', idx === this.selectedSearchIndex);
@@ -1000,8 +1018,10 @@ class AetherApp {
 
   updateStats() {
     const stats = this.editor.getStats();
-    if (this.wordCountEl) this.wordCountEl.textContent = `${stats.words} word${stats.words === 1 ? '' : 's'}`;
-    if (this.charCountEl) this.charCountEl.textContent = `${stats.characters} char${stats.characters === 1 ? '' : 's'}`;
+    if (this.wordCountEl)
+      this.wordCountEl.textContent = `${stats.words} word${stats.words === 1 ? '' : 's'}`;
+    if (this.charCountEl)
+      this.charCountEl.textContent = `${stats.characters} char${stats.characters === 1 ? '' : 's'}`;
     if (this.fileSizeInfo) this.fileSizeInfo.textContent = stats.sizeKb;
   }
 

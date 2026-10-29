@@ -17,7 +17,7 @@ export function LocalGraph({
   const localGraph = useMemo(() => {
     if (!graphData || !activePath) return { nodes: [], links: [] };
 
-    const activeNode = graphData.nodes.find(n => n.id === activePath);
+    const activeNode = graphData.nodes.find((n) => n.id === activePath);
     if (!activeNode) return { nodes: [], links: [] };
 
     const neighborIds = new Set([activePath]);
@@ -37,8 +37,8 @@ export function LocalGraph({
     }
 
     const relevantNodes = graphData.nodes
-      .filter(n => neighborIds.has(n.id))
-      .map(n => ({
+      .filter((n) => neighborIds.has(n.id))
+      .map((n) => ({
         ...n,
         val: n.id === activePath ? 10 : 6,
       }));

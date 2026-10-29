@@ -26,7 +26,8 @@ button {
   transition: all 0.15s ease;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: inherit;
   color: inherit;
   border: 1px solid var(--border-color);
@@ -36,7 +37,8 @@ input, textarea {
   transition: border-color 0.15s ease;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   border-color: var(--accent);
 }
 
@@ -90,7 +92,8 @@ input:focus, textarea:focus {
   user-select: none;
 }
 
-.statusbar-left, .statusbar-right {
+.statusbar-left,
+.statusbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -131,8 +134,12 @@ input:focus, textarea:focus {
 }
 
 @keyframes pulse {
-  from { opacity: 0.4; }
-  to { opacity: 1; }
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Resizer Divider */
@@ -145,7 +152,8 @@ input:focus, textarea:focus {
   z-index: 5;
 }
 
-.pane-resizer:hover, .pane-resizer.resizing {
+.pane-resizer:hover,
+.pane-resizer.resizing {
   background: var(--accent);
 }
 
@@ -177,8 +185,14 @@ input:focus, textarea:focus {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Mobile FAB */

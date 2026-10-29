@@ -9,7 +9,7 @@ function createInitialNotesIfEmpty(vaultDir) {
     fs.mkdirSync(vaultDir, { recursive: true });
   }
 
-  const existing = fs.readdirSync(vaultDir).filter(f => !f.startsWith('.'));
+  const existing = fs.readdirSync(vaultDir).filter((f) => !f.startsWith('.'));
   if (existing.length > 0) return;
 
   const welcomeNote = `# ✧ Welcome to Aether

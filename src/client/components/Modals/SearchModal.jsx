@@ -26,11 +26,13 @@ export function SearchModal({ isOpen, onClose, tree, onSelectNote }) {
     if (isOpen) {
       setQuery('');
       setSelectedIndex(0);
-      setResults(flatNotes.current.map(n => ({
-        path: n.path,
-        title: n.title || n.name.replace(/\.md$/, ''),
-        matches: [],
-      })));
+      setResults(
+        flatNotes.current.map((n) => ({
+          path: n.path,
+          title: n.title || n.name.replace(/\.md$/, ''),
+          matches: [],
+        }))
+      );
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen]);
@@ -39,11 +41,13 @@ export function SearchModal({ isOpen, onClose, tree, onSelectNote }) {
     if (!isOpen) return;
 
     if (!query.trim()) {
-      setResults(flatNotes.current.map(n => ({
-        path: n.path,
-        title: n.title || n.name.replace(/\.md$/, ''),
-        matches: [],
-      })));
+      setResults(
+        flatNotes.current.map((n) => ({
+          path: n.path,
+          title: n.title || n.name.replace(/\.md$/, ''),
+          matches: [],
+        }))
+      );
       setSelectedIndex(0);
       return;
     }
@@ -67,10 +71,12 @@ export function SearchModal({ isOpen, onClose, tree, onSelectNote }) {
   const handleKeyDown = (e) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex(prev => (results.length > 0 ? (prev + 1) % results.length : 0));
+      setSelectedIndex((prev) => (results.length > 0 ? (prev + 1) % results.length : 0));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex(prev => (results.length > 0 ? (prev - 1 + results.length) % results.length : 0));
+      setSelectedIndex((prev) =>
+        results.length > 0 ? (prev - 1 + results.length) % results.length : 0
+      );
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (results[selectedIndex]) {
@@ -133,9 +139,15 @@ export function SearchModal({ isOpen, onClose, tree, onSelectNote }) {
         </div>
 
         <div className="search-modal-footer">
-          <span><kbd>↑</kbd> <kbd>↓</kbd> to navigate</span>
-          <span><kbd>↵</kbd> to open</span>
-          <span><kbd>ESC</kbd> to close</span>
+          <span>
+            <kbd>↑</kbd> <kbd>↓</kbd> to navigate
+          </span>
+          <span>
+            <kbd>↵</kbd> to open
+          </span>
+          <span>
+            <kbd>ESC</kbd> to close
+          </span>
         </div>
       </div>
     </div>

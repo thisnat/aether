@@ -47,9 +47,9 @@ export function App() {
   const [toasts, setToasts] = useState([]);
   const showToast = useCallback((message, duration = 2400) => {
     const id = Date.now() + Math.random().toString(36).substring(2, 5);
-    setToasts(prev => [...prev, { id, message }]);
+    setToasts((prev) => [...prev, { id, message }]);
     setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
+      setToasts((prev) => prev.filter((t) => t.id !== id));
     }, duration);
   }, []);
 
@@ -64,31 +64,41 @@ export function App() {
   }, []);
 
   // WebSocket callbacks
-  const handleRemoteNoteSaved = useCallback((data) => {
-    if (activeNoteRef.current && activeNoteRef.current.path === data.path) {
-      if (!isDirtyRef.current) {
-        vault.setActiveNote(prev => ({
-          ...prev,
-          content: data.content,
-          mtime: data.mtime,
-        }));
-        showToast('Note updated by peer device');
-      } else {
-        showToast(`⚠️ Conflict warning: Remote edit received for "${data.title}" while editing`);
+  const handleRemoteNoteSaved = useCallback(
+    (data) => {
+      if (activeNoteRef.current && activeNoteRef.current.path === data.path) {
+        if (!isDirtyRef.current) {
+          vault.setActiveNote((prev) => ({
+            ...prev,
+            content: data.content,
+            mtime: data.mtime,
+          }));
+          showToast('Note updated by peer device');
+        } else {
+          showToast(`⚠️ Conflict warning: Remote edit received for "${data.title}" while editing`);
+        }
       }
-    }
-    vault.loadTree();
-    loadGraphData();
-  }, [loadGraphData, showToast]);
+      vault.loadTree();
+      loadGraphData();
+    },
+    [loadGraphData, showToast]
+  );
 
-  const handleExternalVaultChange = useCallback((data) => {
-    vault.loadTree();
-    loadGraphData();
-    if (activeNoteRef.current && activeNoteRef.current.path === data.path && !isDirtyRef.current) {
-      vault.openNote(data.path);
-      showToast('Updated from disk change');
-    }
-  }, [loadGraphData, showToast]);
+  const handleExternalVaultChange = useCallback(
+    (data) => {
+      vault.loadTree();
+      loadGraphData();
+      if (
+        activeNoteRef.current &&
+        activeNoteRef.current.path === data.path &&
+        !isDirtyRef.current
+      ) {
+        vault.openNote(data.path);
+        showToast('Updated from disk change');
+      }
+    },
+    [loadGraphData, showToast]
+  );
 
   const { peerCount, clientId } = useWebSocket({
     onNoteSaved: handleRemoteNoteSaved,
@@ -180,9 +190,9 @@ export function App() {
     },
     onToggleSidebar: () => {
       if (window.innerWidth <= 768) {
-        setSidebarMobileOpen(prev => !prev);
+        setSidebarMobileOpen((prev) => !prev);
       } else {
-        setSidebarCollapsed(prev => !prev);
+        setSidebarCollapsed((prev) => !prev);
       }
     },
     onCloseModals: closeAllModals,
@@ -246,9 +256,9 @@ export function App() {
         onToggleTheme={toggleTheme}
         onToggleSidebar={() => {
           if (window.innerWidth <= 768) {
-            setSidebarMobileOpen(prev => !prev);
+            setSidebarMobileOpen((prev) => !prev);
           } else {
-            setSidebarCollapsed(prev => !prev);
+            setSidebarCollapsed((prev) => !prev);
           }
         }}
         onOpenNetworkModal={() => {
@@ -318,10 +328,7 @@ export function App() {
         />
 
         <main className="editor-main">
-          <div
-            id="panes-container"
-            className={`panes-container mode-${viewMode}`}
-          >
+          <div id="panes-container" className={`panes-container mode-${viewMode}`}>
             <div
               style={{
                 display: viewMode === 'preview' ? 'none' : 'flex',
@@ -345,9 +352,7 @@ export function App() {
               />
             </div>
 
-            {viewMode === 'split' && (
-              <PaneResizer onResize={handlePaneResize} />
-            )}
+            {viewMode === 'split' && <PaneResizer onResize={handlePaneResize} />}
 
             <div
               style={{
@@ -384,10 +389,7 @@ export function App() {
             <span>{viewMode === 'edit' ? 'Preview' : 'Edit'}</span>
           </button>
 
-          <StatusBar
-            saveStatus={vault.saveStatus}
-            content={vault.activeNote?.content || ''}
-          />
+          <StatusBar saveStatus={vault.saveStatus} content={vault.activeNote?.content || ''} />
         </main>
       </div>
 

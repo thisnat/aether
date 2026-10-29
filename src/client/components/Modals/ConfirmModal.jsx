@@ -21,9 +21,7 @@ export function ConfirmModal({
         </div>
 
         <div className="modal-body">
-          <p style={{ fontSize: 13, color: 'var(--text-main)', lineHeight: 1.5 }}>
-            {message}
-          </p>
+          <p style={{ fontSize: 13, color: 'var(--text-main)', lineHeight: 1.5 }}>{message}</p>
         </div>
 
         <div className="modal-footer">

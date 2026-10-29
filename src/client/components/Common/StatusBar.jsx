@@ -6,13 +6,14 @@ export function StatusBar({ saveStatus, content = '' }) {
     return calculateNoteStats(content);
   }, [content]);
 
-  const statusLabel = {
-    saving: 'Saving...',
-    saved: 'Saved',
-    dirty: 'Unsaved edits',
-    loading: 'Loading note...',
-    error: 'Save error!',
-  }[saveStatus] || 'Saved';
+  const statusLabel =
+    {
+      saving: 'Saving...',
+      saved: 'Saved',
+      dirty: 'Unsaved edits',
+      loading: 'Loading note...',
+      error: 'Save error!',
+    }[saveStatus] || 'Saved';
 
   return (
     <footer className="statusbar">
@@ -26,9 +27,13 @@ export function StatusBar({ saveStatus, content = '' }) {
       </div>
 
       <div className="statusbar-right">
-        <span>{stats.words} word{stats.words === 1 ? '' : 's'}</span>
+        <span>
+          {stats.words} word{stats.words === 1 ? '' : 's'}
+        </span>
         <span className="status-sep">/</span>
-        <span>{stats.characters} character{stats.characters === 1 ? '' : 's'}</span>
+        <span>
+          {stats.characters} character{stats.characters === 1 ? '' : 's'}
+        </span>
       </div>
     </footer>
   );

@@ -44,21 +44,26 @@
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Development Mode
+
 Run both backend and client with hot-module replacement (HMR):
+
 ```bash
 npm run dev
 ```
 
 ### 3. Production Build & Start
+
 ```bash
 npm start
 ```
-*(Running `npm start` automatically builds the React client and launches the server).*
+
+_(Running `npm start` automatically builds the React client and launches the server)._
 
 ---
 
@@ -102,17 +107,17 @@ aether/
 
 ## ⌨️ Keyboard Shortcuts
 
-| Shortcut | Description |
-| :--- | :--- |
-| **Ctrl + S** (or **Cmd + S**) | Save active note *(auto-save is also active)* |
-| **Ctrl + K** / **Ctrl + P** | Open Quick Switcher / Search palette |
-| **Ctrl + N** | Create a new note |
-| **Ctrl + E** | Toggle between Edit and Preview modes |
-| **Ctrl + \\** | Toggle sidebar visibility |
-| **Ctrl + B** | Bold text selection |
-| **Ctrl + I** | Italic text selection |
-| **Tab** / **Shift + Tab** | Indent / unindent selection (2 spaces) |
-| **Esc** | Close any active modal or search box |
+| Shortcut                      | Description                                   |
+| :---------------------------- | :-------------------------------------------- |
+| **Ctrl + S** (or **Cmd + S**) | Save active note _(auto-save is also active)_ |
+| **Ctrl + K** / **Ctrl + P**   | Open Quick Switcher / Search palette          |
+| **Ctrl + N**                  | Create a new note                             |
+| **Ctrl + E**                  | Toggle between Edit and Preview modes         |
+| **Ctrl + \\**                 | Toggle sidebar visibility                     |
+| **Ctrl + B**                  | Bold text selection                           |
+| **Ctrl + I**                  | Italic text selection                         |
+| **Tab** / **Shift + Tab**     | Indent / unindent selection (2 spaces)        |
+| **Esc**                       | Close any active modal or search box          |
 
 ---
 
@@ -136,6 +141,21 @@ PORT=8080 VAULT_DIR="/path/to/MyObsidianVault" npm start
 ## 🧪 Testing
 
 Run automated tests verifying note creation, folder management, rename, search, and deletion:
+
 ```bash
 npm test
+```
+
+---
+
+## 🧹 Code Formatting
+
+Format all codebase files using Prettier:
+
+```bash
+# Automatically format all files:
+npm run format
+
+# Check formatting status:
+npm run format:check
 ```

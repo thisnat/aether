@@ -60,7 +60,9 @@ export function Topbar({
           title="Local network sharing info"
         >
           <span className="peer-indicator" />
-          <span>{peerCount} device{peerCount === 1 ? '' : 's'}</span>
+          <span>
+            {peerCount} device{peerCount === 1 ? '' : 's'}
+          </span>
         </button>
 
         <button

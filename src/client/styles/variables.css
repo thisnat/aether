@@ -1,7 +1,7 @@
 :root {
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
-  
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, 'Courier New', monospace;
+
   /* Dark Theme Palette (Default) */
   --bg-app: #0e1117;
   --bg-sidebar: #131722;
@@ -12,33 +12,33 @@
   --bg-preview: #11141d;
   --border-color: #232b3e;
   --border-focus: #4f5875;
-  
+
   --text-main: #e2e8f0;
   --text-muted: #8c9bb4;
   --text-dim: #5c6882;
-  
+
   --accent: #6366f1;
   --accent-hover: #4f46e5;
   --accent-light: rgba(99, 102, 241, 0.15);
-  
+
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
-  
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 14px rgba(0,0,0,0.4);
-  --shadow-lg: 0 12px 30px rgba(0,0,0,0.5);
-  
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.5);
+
   --sidebar-width: 280px;
   --topbar-height: 52px;
   --statusbar-height: 32px;
 }
 
-[data-theme="light"] {
+[data-theme='light'] {
   --bg-app: #f8fafc;
   --bg-sidebar: #f1f5f9;
   --bg-sidebar-hover: #e2e8f0;
@@ -48,18 +48,18 @@
   --bg-preview: #f8fafc;
   --border-color: #e2e8f0;
   --border-focus: #cbd5e1;
-  
+
   --text-main: #0f172a;
   --text-muted: #64748b;
   --text-dim: #94a3b8;
-  
+
   --accent: #4f46e5;
   --accent-hover: #4338ca;
   --accent-light: rgba(79, 70, 229, 0.08);
-  
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 30px rgba(0,0,0,0.12);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
 * {
@@ -68,7 +68,8 @@
   padding: 0;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   height: 100dvh;

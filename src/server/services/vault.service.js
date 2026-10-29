@@ -302,7 +302,10 @@ class VaultService {
           await scan(entryRel);
         } else if (entry.isFile() && entry.name.endsWith('.md')) {
           const content = await fs.promises.readFile(entryFull, 'utf-8');
-          const regex = new RegExp(`\\[\\[(?:[^\\]|]+\\/)?${escapeRegExp(targetBase)}(?:\\|[^\\]]+)?\\]\\]`, 'i');
+          const regex = new RegExp(
+            `\\[\\[(?:[^\\]|]+\\/)?${escapeRegExp(targetBase)}(?:\\|[^\\]]+)?\\]\\]`,
+            'i'
+          );
           if (regex.test(content)) {
             backlinks.push({
               path: entryRel,
@@ -381,7 +384,8 @@ class VaultService {
       while ((match = wikilinkRegex.exec(file.content)) !== null) {
         const rawTarget = match[1].trim().toLowerCase();
         // Resolve target path from map
-        const targetPath = titleToPath.get(rawTarget) ||
+        const targetPath =
+          titleToPath.get(rawTarget) ||
           titleToPath.get(path.basename(rawTarget, '.md').toLowerCase());
 
         if (targetPath && targetPath !== sourcePath) {
@@ -403,7 +407,7 @@ class VaultService {
       }
     }
 
-    const nodes = Array.from(files.values()).map(file => {
+    const nodes = Array.from(files.values()).map((file) => {
       const connections = file.inDegree + file.outDegree;
       return {
         id: file.path,

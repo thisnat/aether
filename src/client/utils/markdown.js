@@ -16,11 +16,14 @@ export function renderMarkdown(markdownText = '') {
   if (!markdownText) return '<div class="muted">Empty note. Start typing...</div>';
 
   // 1. Pre-process Obsidian Wikilinks
-  const processed = markdownText.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, target, alias) => {
-    const cleanTarget = target.trim();
-    const displayText = alias ? alias.trim() : cleanTarget;
-    return `<a class="wikilink" data-target="${escapeHtml(cleanTarget)}" title="Go to note: ${escapeHtml(cleanTarget)}">${escapeHtml(displayText)}</a>`;
-  });
+  const processed = markdownText.replace(
+    /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
+    (match, target, alias) => {
+      const cleanTarget = target.trim();
+      const displayText = alias ? alias.trim() : cleanTarget;
+      return `<a class="wikilink" data-target="${escapeHtml(cleanTarget)}" title="Go to note: ${escapeHtml(cleanTarget)}">${escapeHtml(displayText)}</a>`;
+    }
+  );
 
   // 2. Render markdown to HTML using marked
   let html = '';
@@ -33,12 +36,15 @@ export function renderMarkdown(markdownText = '') {
 
   // 3. Post-process task lists to make checkboxes interactive
   let taskIndex = 0;
-  html = html.replace(/<li(?:\s+class="([^"]*)")?>\s*<input\s+([^>]*?)type="checkbox"([^>]*?)>/gi, (match, liClass, before, after) => {
-    const isChecked = before.includes('checked') || after.includes('checked');
-    const idx = taskIndex++;
-    const fullLiClass = (liClass ? liClass + ' ' : '') + 'task-list-item';
-    return `<li class="${fullLiClass}"><input type="checkbox" class="interactive-task" data-task-idx="${idx}" ${isChecked ? 'checked' : ''}>`;
-  });
+  html = html.replace(
+    /<li(?:\s+class="([^"]*)")?>\s*<input\s+([^>]*?)type="checkbox"([^>]*?)>/gi,
+    (match, liClass, before, after) => {
+      const isChecked = before.includes('checked') || after.includes('checked');
+      const idx = taskIndex++;
+      const fullLiClass = (liClass ? liClass + ' ' : '') + 'task-list-item';
+      return `<li class="${fullLiClass}"><input type="checkbox" class="interactive-task" data-task-idx="${idx}" ${isChecked ? 'checked' : ''}>`;
+    }
+  );
 
   return html;
 }
@@ -72,7 +78,9 @@ export function enhanceRenderedContent(containerElement) {
       try {
         await navigator.clipboard.writeText(codeText);
         btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+        }, 2000);
       } catch {
         btn.textContent = 'Failed';
       }
@@ -91,7 +99,7 @@ export function toggleCheckboxInMarkdown(rawMarkdown, targetIndex) {
   return rawMarkdown.replace(taskRegex, (line, prefix, checkState, suffix) => {
     if (currentIndex === targetIndex) {
       currentIndex++;
-      const newState = (checkState.trim() === 'x' || checkState.trim() === 'X') ? ' ' : 'x';
+      const newState = checkState.trim() === 'x' || checkState.trim() === 'X' ? ' ' : 'x';
       return `${prefix}${newState}${suffix}`;
     }
     currentIndex++;

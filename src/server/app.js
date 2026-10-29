@@ -27,9 +27,10 @@ function createApp({ vaultController, networkController, config }) {
   app.use('/api', createApiRouter({ vaultController, networkController }));
 
   // Determine client static directory: prefer built React frontend ('dist'), fallback to 'public'
-  const staticDir = fs.existsSync(config.distDir) && fs.existsSync(path.join(config.distDir, 'index.html'))
-    ? config.distDir
-    : config.publicDir;
+  const staticDir =
+    fs.existsSync(config.distDir) && fs.existsSync(path.join(config.distDir, 'index.html'))
+      ? config.distDir
+      : config.publicDir;
 
   app.use(express.static(staticDir));
 

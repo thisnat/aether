@@ -32,14 +32,17 @@ class VaultController {
       if (!filePath) return res.status(400).json({ error: 'Path is required' });
       const saved = await this.vault.writeFile(filePath, content ?? '');
 
-      this.ws.broadcast({
-        type: 'note:saved',
-        path: saved.path,
-        title: saved.title,
-        content,
-        mtime: saved.mtime,
-        senderId,
-      }, senderId);
+      this.ws.broadcast(
+        {
+          type: 'note:saved',
+          path: saved.path,
+          title: saved.title,
+          content,
+          mtime: saved.mtime,
+          senderId,
+        },
+        senderId
+      );
 
       res.json(saved);
     } catch (err) {
@@ -104,7 +107,8 @@ class VaultController {
   renameItem = async (req, res) => {
     try {
       const { oldPath, newPath } = req.body;
-      if (!oldPath || !newPath) return res.status(400).json({ error: 'Both oldPath and newPath are required' });
+      if (!oldPath || !newPath)
+        return res.status(400).json({ error: 'Both oldPath and newPath are required' });
       const result = await this.vault.renameItem(oldPath, newPath);
 
       this.ws.broadcast({

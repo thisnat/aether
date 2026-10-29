@@ -41,9 +41,7 @@ export function PromptModal({
 
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
-            <label style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-              {label}
-            </label>
+            <label style={{ fontSize: 13, color: 'var(--text-muted)' }}>{label}</label>
             <input
               ref={inputRef}
               type="text"

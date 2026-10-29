@@ -72,7 +72,7 @@ export function GraphCanvas({
 
   // Initialize or update node positions when graph data changes
   useEffect(() => {
-    const existingMap = new Map(simNodesRef.current.map(n => [n.id, n]));
+    const existingMap = new Map(simNodesRef.current.map((n) => [n.id, n]));
 
     const cx = width / 2;
     const cy = height / 2;
@@ -106,13 +106,13 @@ export function GraphCanvas({
       };
     });
 
-    const nodeIndex = new Map(simNodesRef.current.map(n => [n.id, n]));
+    const nodeIndex = new Map(simNodesRef.current.map((n) => [n.id, n]));
     simLinksRef.current = links
-      .map(l => ({
+      .map((l) => ({
         source: nodeIndex.get(l.source),
         target: nodeIndex.get(l.target),
       }))
-      .filter(l => l.source && l.target);
+      .filter((l) => l.source && l.target);
 
     // Initial alpha burst to organize
     alphaRef.current = 1;
@@ -246,16 +246,18 @@ export function GraphCanvas({
     ctx.lineWidth = 1 / t.k;
     for (let i = 0; i < simLinks.length; i++) {
       const link = simLinks[i];
-      const isConnected = hovered && (link.source.id === hovered.id || link.target.id === hovered.id);
-      const isRelatedToActive = activePath && (link.source.id === activePath || link.target.id === activePath);
+      const isConnected =
+        hovered && (link.source.id === hovered.id || link.target.id === hovered.id);
+      const isRelatedToActive =
+        activePath && (link.source.id === activePath || link.target.id === activePath);
 
       ctx.strokeStyle = isConnected
         ? colors.linkActive
         : isRelatedToActive
-        ? colors.linkActive
-        : hovered
-        ? 'rgba(79, 88, 117, 0.12)'
-        : colors.link;
+          ? colors.linkActive
+          : hovered
+            ? 'rgba(79, 88, 117, 0.12)'
+            : colors.link;
 
       ctx.beginPath();
       ctx.moveTo(link.source.x, link.source.y);
@@ -382,7 +384,10 @@ export function GraphCanvas({
       wakeSimulation();
     } else {
       isPanningRef.current = true;
-      panStartRef.current = { x: e.clientX - transformRef.current.x, y: e.clientY - transformRef.current.y };
+      panStartRef.current = {
+        x: e.clientX - transformRef.current.x,
+        y: e.clientY - transformRef.current.y,
+      };
     }
   };
 
@@ -456,16 +461,19 @@ export function GraphCanvas({
   };
 
   // Center on active note
-  const centerOnNode = useCallback((targetPath) => {
-    if (!targetPath) return;
-    const node = simNodesRef.current.find(n => n.id === targetPath);
-    if (node) {
-      const t = transformRef.current;
-      t.x = width / 2 - node.x * t.k;
-      t.y = height / 2 - node.y * t.k;
-      wakeSimulation();
-    }
-  }, [width, height, wakeSimulation]);
+  const centerOnNode = useCallback(
+    (targetPath) => {
+      if (!targetPath) return;
+      const node = simNodesRef.current.find((n) => n.id === targetPath);
+      if (node) {
+        const t = transformRef.current;
+        t.x = width / 2 - node.x * t.k;
+        t.y = height / 2 - node.y * t.k;
+        wakeSimulation();
+      }
+    },
+    [width, height, wakeSimulation]
+  );
 
   // Center when active path changes
   useEffect(() => {

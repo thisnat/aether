@@ -92,10 +92,18 @@ class EditorController {
         let modified;
         if (shiftKey) {
           // Unindent
-          modified = lines.map(line => line.startsWith('  ') ? line.substring(2) : (line.startsWith(' ') ? line.substring(1) : line)).join('\n');
+          modified = lines
+            .map((line) =>
+              line.startsWith('  ')
+                ? line.substring(2)
+                : line.startsWith(' ')
+                  ? line.substring(1)
+                  : line
+            )
+            .join('\n');
         } else {
           // Indent
-          modified = lines.map(line => '  ' + line).join('\n');
+          modified = lines.map((line) => '  ' + line).join('\n');
         }
 
         this.textarea.value = val.substring(0, lineStart) + modified + val.substring(effectiveEnd);

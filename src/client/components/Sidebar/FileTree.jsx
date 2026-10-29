@@ -4,7 +4,13 @@ import { FileItem } from './FileItem';
 
 export function FileTree({ nodes, activePath, onSelectNote, onNewNote, onDeleteItem }) {
   if (!nodes || nodes.length === 0) {
-    return <div className="tree-empty">Vault is empty.<br />Click "+ Note" to create one.</div>;
+    return (
+      <div className="tree-empty">
+        Vault is empty.
+        <br />
+        Click "+ Note" to create one.
+      </div>
+    );
   }
 
   return (

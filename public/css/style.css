@@ -3,9 +3,9 @@
    ======================================================== */
 
 :root {
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
-  
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, 'Courier New', monospace;
+
   /* Dark Theme Palette (Default) */
   --bg-app: #0e1117;
   --bg-sidebar: #131722;
@@ -16,33 +16,33 @@
   --bg-preview: #11141d;
   --border-color: #232b3e;
   --border-focus: #4f5875;
-  
+
   --text-main: #e2e8f0;
   --text-muted: #8c9bb4;
   --text-dim: #5c6882;
-  
+
   --accent: #6366f1;
   --accent-hover: #4f46e5;
   --accent-light: rgba(99, 102, 241, 0.15);
-  
+
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
-  
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 14px rgba(0,0,0,0.4);
-  --shadow-lg: 0 12px 30px rgba(0,0,0,0.5);
-  
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.5);
+
   --sidebar-width: 280px;
   --topbar-height: 52px;
   --statusbar-height: 32px;
 }
 
-[data-theme="light"] {
+[data-theme='light'] {
   --bg-app: #f8fafc;
   --bg-sidebar: #f1f5f9;
   --bg-sidebar-hover: #e2e8f0;
@@ -52,18 +52,18 @@
   --bg-preview: #f8fafc;
   --border-color: #e2e8f0;
   --border-focus: #cbd5e1;
-  
+
   --text-main: #0f172a;
   --text-muted: #64748b;
   --text-dim: #94a3b8;
-  
+
   --accent: #4f46e5;
   --accent-hover: #4338ca;
   --accent-light: rgba(79, 70, 229, 0.08);
-  
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 30px rgba(0,0,0,0.12);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
 * {
@@ -72,7 +72,8 @@
   padding: 0;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   height: 100dvh;
@@ -111,7 +112,9 @@ html, body {
   z-index: 20;
 }
 
-.topbar-left, .topbar-center, .topbar-right {
+.topbar-left,
+.topbar-center,
+.topbar-right {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -221,8 +224,15 @@ html, body {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.9); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
 }
 
 /* Action Buttons */
@@ -288,7 +298,9 @@ html, body {
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), margin-left 0.25s ease;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    margin-left 0.25s ease;
   z-index: 10;
 }
 
@@ -372,7 +384,8 @@ html, body {
   padding: 8px 6px;
 }
 
-.tree-loading, .tree-empty {
+.tree-loading,
+.tree-empty {
   padding: 20px 14px;
   font-size: 13px;
   color: var(--text-dim);
@@ -383,7 +396,8 @@ html, body {
   margin-bottom: 2px;
 }
 
-.tree-folder-header, .tree-file {
+.tree-folder-header,
+.tree-file {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -397,7 +411,8 @@ html, body {
   group: true;
 }
 
-.tree-folder-header:hover, .tree-file:hover {
+.tree-folder-header:hover,
+.tree-file:hover {
   background: var(--bg-sidebar-hover);
   color: var(--text-main);
 }
@@ -408,7 +423,7 @@ html, body {
   font-weight: 600;
 }
 
-[data-theme="light"] .tree-file.active {
+[data-theme='light'] .tree-file.active {
   color: var(--accent);
   background: rgba(79, 70, 229, 0.12);
 }
@@ -630,7 +645,8 @@ html, body {
   position: relative;
 }
 
-.editor-pane, .preview-pane {
+.editor-pane,
+.preview-pane {
   flex: 1;
   min-width: 0;
   height: 100%;
@@ -665,7 +681,8 @@ html, body {
   z-index: 5;
 }
 
-.pane-resizer:hover, .pane-resizer.resizing {
+.pane-resizer:hover,
+.pane-resizer.resizing {
   background: var(--accent);
 }
 
@@ -744,7 +761,8 @@ html, body {
   color: var(--text-dim);
 }
 
-.statusbar-left, .statusbar-right {
+.statusbar-left,
+.statusbar-right {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -779,8 +797,12 @@ html, body {
   margin: 0 auto;
 }
 
-.markdown-body h1, .markdown-body h2, .markdown-body h3,
-.markdown-body h4, .markdown-body h5, .markdown-body h6 {
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
   margin-top: 1.5em;
   margin-bottom: 0.6em;
   font-weight: 700;
@@ -804,14 +826,21 @@ html, body {
   padding-bottom: 0.25em;
 }
 
-.markdown-body h3 { font-size: 1.25em; }
-.markdown-body h4 { font-size: 1.1em; }
+.markdown-body h3 {
+  font-size: 1.25em;
+}
+.markdown-body h4 {
+  font-size: 1.1em;
+}
 
-.markdown-body p, .markdown-body ul, .markdown-body ol {
+.markdown-body p,
+.markdown-body ul,
+.markdown-body ol {
   margin-bottom: 1em;
 }
 
-.markdown-body ul, .markdown-body ol {
+.markdown-body ul,
+.markdown-body ol {
   padding-left: 1.5em;
 }
 
@@ -898,7 +927,8 @@ html, body {
   display: block;
 }
 
-.markdown-body th, .markdown-body td {
+.markdown-body th,
+.markdown-body td {
   border: 1px solid var(--border-color);
   padding: 8px 12px;
   text-align: left;
@@ -922,7 +952,7 @@ html, body {
   gap: 8px;
 }
 
-.markdown-body input[type="checkbox"] {
+.markdown-body input[type='checkbox'] {
   accent-color: var(--accent);
   cursor: pointer;
   width: 15px;
@@ -971,8 +1001,14 @@ html, body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .modal-card {
@@ -1293,7 +1329,8 @@ html, body {
   transition: all 0.1s ease;
 }
 
-.search-result-item:hover, .search-result-item.selected {
+.search-result-item:hover,
+.search-result-item.selected {
   background: var(--bg-sidebar-hover);
 }
 
@@ -1405,8 +1442,14 @@ html, body {
 }
 
 @keyframes slideToast {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Mobile Helper Defaults */
@@ -1468,7 +1511,7 @@ html, body {
     gap: 4px;
   }
 
-  .mode-btn[data-mode="split"] {
+  .mode-btn[data-mode='split'] {
     display: none !important;
   }
 
@@ -1544,7 +1587,8 @@ html, body {
   }
 
   /* Touch-friendly File Tree Items */
-  .tree-folder-header, .tree-file {
+  .tree-folder-header,
+  .tree-file {
     min-height: 42px;
     padding: 8px 10px;
     font-size: 13.5px;
@@ -1594,7 +1638,8 @@ html, body {
     display: none !important;
   }
 
-  .editor-pane, .preview-pane {
+  .editor-pane,
+  .preview-pane {
     width: 100% !important;
   }
 
@@ -1613,9 +1658,15 @@ html, body {
     line-height: 1.65;
   }
 
-  .markdown-body h1 { font-size: 1.6em; }
-  .markdown-body h2 { font-size: 1.3em; }
-  .markdown-body h3 { font-size: 1.15em; }
+  .markdown-body h1 {
+    font-size: 1.6em;
+  }
+  .markdown-body h2 {
+    font-size: 1.3em;
+  }
+  .markdown-body h3 {
+    font-size: 1.15em;
+  }
 
   /* Code Blocks & Tables horizontal scrolling on mobile */
   .markdown-body pre {
@@ -1639,7 +1690,8 @@ html, body {
     font-size: 13px;
   }
 
-  .markdown-body th, .markdown-body td {
+  .markdown-body th,
+  .markdown-body td {
     padding: 6px 8px;
   }
 
@@ -1648,7 +1700,7 @@ html, body {
     padding: 4px 0;
   }
 
-  .markdown-body input[type="checkbox"] {
+  .markdown-body input[type='checkbox'] {
     width: 18px;
     height: 18px;
     margin-right: 4px;
@@ -1672,7 +1724,9 @@ html, body {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     cursor: pointer;
     z-index: 40;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition:
+      transform 0.15s ease,
+      background 0.15s ease;
     touch-action: manipulation;
   }
 
@@ -1686,7 +1740,8 @@ html, body {
     font-size: 11px;
   }
 
-  #file-size-info, .status-sep {
+  #file-size-info,
+  .status-sep {
     display: none;
   }
 

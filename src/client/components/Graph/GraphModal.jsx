@@ -39,13 +39,15 @@ export function GraphModal({
     const clean = filterQuery.toLowerCase().trim();
     const matchingNodeIds = new Set(
       graphData.nodes
-        .filter(n => n.title.toLowerCase().includes(clean) || n.path.toLowerCase().includes(clean))
-        .map(n => n.id)
+        .filter(
+          (n) => n.title.toLowerCase().includes(clean) || n.path.toLowerCase().includes(clean)
+        )
+        .map((n) => n.id)
     );
 
-    const filteredNodes = graphData.nodes.filter(n => matchingNodeIds.has(n.id));
+    const filteredNodes = graphData.nodes.filter((n) => matchingNodeIds.has(n.id));
     const filteredLinks = graphData.links.filter(
-      l => matchingNodeIds.has(l.source) && matchingNodeIds.has(l.target)
+      (l) => matchingNodeIds.has(l.source) && matchingNodeIds.has(l.target)
     );
 
     return {
@@ -100,9 +102,7 @@ export function GraphModal({
         </div>
 
         <div className="graph-modal-footer">
-          <span className="graph-hint">
-            Drag to pan · Scroll to zoom · Click node to open
-          </span>
+          <span className="graph-hint">Drag to pan · Scroll to zoom · Click node to open</span>
           {activePath && (
             <span className="graph-active-label">
               Active: <strong>{activePath}</strong>

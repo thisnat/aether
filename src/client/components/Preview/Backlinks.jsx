@@ -13,11 +13,7 @@ export function Backlinks({ backlinks = [], onSelectNote }) {
 
       <div className="backlinks-list">
         {backlinks.map((link) => (
-          <a
-            key={link.path}
-            className="backlink-item"
-            onClick={() => onSelectNote(link.path)}
-          >
+          <a key={link.path} className="backlink-item" onClick={() => onSelectNote(link.path)}>
             <FileText size={12} />
             <span>{link.title}</span>
           </a>

@@ -7,6 +7,8 @@
     "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm:dev:server\" \"npm:dev:client\"",
     "dev:server": "node --watch server.js",
     "dev:client": "vite",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prestart": "npm run build",
     "start": "node server.js",
     "test": "node tests/test-crud.js"
@@ -28,6 +30,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^6.1.2",
     "concurrently": "^10.0.6",
+    "prettier": "^3.9.10",
     "vite": "^8.3.5"
   }
 }

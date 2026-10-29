@@ -1,12 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { MarkdownToolbar } from './MarkdownToolbar';
 
-export function EditorPane({
-  activeNote,
-  onContentChange,
-  onTitleRename,
-  onForceSave,
-}) {
+export function EditorPane({ activeNote, onContentChange, onTitleRename, onForceSave }) {
   const textareaRef = useRef(null);
   const titleInputRef = useRef(null);
 
@@ -127,9 +122,17 @@ export function EditorPane({
 
         let modified;
         if (shiftKey) {
-          modified = lines.map(line => (line.startsWith('  ') ? line.substring(2) : line.startsWith(' ') ? line.substring(1) : line)).join('\n');
+          modified = lines
+            .map((line) =>
+              line.startsWith('  ')
+                ? line.substring(2)
+                : line.startsWith(' ')
+                  ? line.substring(1)
+                  : line
+            )
+            .join('\n');
         } else {
-          modified = lines.map(line => '  ' + line).join('\n');
+          modified = lines.map((line) => '  ' + line).join('\n');
         }
 
         textarea.value = val.substring(0, lineStart) + modified + val.substring(effectiveEnd);
@@ -228,7 +231,11 @@ export function EditorPane({
       <textarea
         ref={textareaRef}
         id="markdown-editor"
-        placeholder={activeNote ? 'Type markdown here... You can use [[Wikilinks]] to link to other notes.' : 'Select or create a note to begin...'}
+        placeholder={
+          activeNote
+            ? 'Type markdown here... You can use [[Wikilinks]] to link to other notes.'
+            : 'Select or create a note to begin...'
+        }
         disabled={!activeNote}
         value={activeNote?.content ?? ''}
         onChange={(e) => onContentChange(e.target.value)}

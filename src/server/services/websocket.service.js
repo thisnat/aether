@@ -15,11 +15,13 @@ class WebSocketService {
       ws.clientId = 'peer_' + Math.random().toString(36).substring(2, 9);
 
       // Send initial welcome & peer count
-      ws.send(JSON.stringify({
-        type: 'connected',
-        clientId: ws.clientId,
-        peerCount: this.peerCount,
-      }));
+      ws.send(
+        JSON.stringify({
+          type: 'connected',
+          clientId: ws.clientId,
+          peerCount: this.peerCount,
+        })
+      );
 
       this.broadcastPeerCount();
 
@@ -27,12 +29,15 @@ class WebSocketService {
         try {
           const data = JSON.parse(message);
           if (data.type === 'note:typing') {
-            this.broadcast({
-              type: 'note:typing',
-              path: data.path,
-              user: data.user || 'Peer',
-              senderId: ws.clientId,
-            }, ws.clientId);
+            this.broadcast(
+              {
+                type: 'note:typing',
+                path: data.path,
+                user: data.user || 'Peer',
+                senderId: ws.clientId,
+              },
+              ws.clientId
+            );
           }
         } catch {
           // Ignore invalid JSON
@@ -48,7 +53,8 @@ class WebSocketService {
   broadcast(data, excludeSenderId = null) {
     const payload = JSON.stringify(data);
     for (const client of this.wss.clients) {
-      if (client.readyState === 1) { // OPEN
+      if (client.readyState === 1) {
+        // OPEN
         if (excludeSenderId && client.clientId === excludeSenderId) {
           continue;
         }

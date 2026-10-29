@@ -100,10 +100,7 @@ export function PreviewPane({
       />
 
       {/* Backlinks */}
-      <Backlinks
-        backlinks={activeNote?.backlinks || []}
-        onSelectNote={onSelectNote}
-      />
+      <Backlinks backlinks={activeNote?.backlinks || []} onSelectNote={onSelectNote} />
 
       {/* Hover preview card */}
       {hoverTarget && (
