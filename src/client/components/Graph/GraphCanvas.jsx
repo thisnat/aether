@@ -34,31 +34,31 @@ export function GraphCanvas({
   const isPanningRef = useRef(false);
   const panStartRef = useRef({ x: 0, y: 0 });
 
-  // Colors
+  // Colors per style.md (Notion Design System)
   const colors = isDark
     ? {
-        bg: '#0e1117',
-        node: '#4f5875',
-        nodeActive: '#6366f1',
-        nodeHover: '#a5b4fc',
-        nodeConnected: '#818cf8',
-        link: 'rgba(79, 88, 117, 0.35)',
-        linkActive: 'rgba(99, 102, 241, 0.7)',
-        text: '#cbd5e1',
-        textActive: '#ffffff',
-        textDim: '#475569',
+        bg: '#191919',
+        node: '#615D59',
+        nodeActive: '#0075DE',
+        nodeHover: '#097FE8',
+        nodeConnected: '#27918D',
+        link: 'rgba(255, 255, 255, 0.12)',
+        linkActive: 'rgba(0, 117, 222, 0.8)',
+        text: 'rgba(255, 255, 255, 0.92)',
+        textActive: '#FFFFFF',
+        textDim: '#6B6B6B',
       }
     : {
-        bg: '#f8fafc',
-        node: '#94a3b8',
-        nodeActive: '#4f46e5',
-        nodeHover: '#6366f1',
-        nodeConnected: '#818cf8',
-        link: 'rgba(203, 213, 225, 0.8)',
-        linkActive: 'rgba(79, 70, 229, 0.6)',
-        text: '#1e293b',
-        textActive: '#0f172a',
-        textDim: '#94a3b8',
+        bg: '#FFFFFF',
+        node: '#A39E98',
+        nodeActive: '#0075DE',
+        nodeHover: '#097FE8',
+        nodeConnected: '#27918D',
+        link: 'rgba(0, 0, 0, 0.08)',
+        linkActive: 'rgba(0, 117, 222, 0.75)',
+        text: 'rgba(0, 0, 0, 0.898)',
+        textActive: '#000000',
+        textDim: '#A39E98',
       };
 
   // Wake up simulation loop

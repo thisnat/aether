@@ -1,7 +1,7 @@
 const qrcodeTerminal = require('qrcode-terminal');
 
 const INNER_WIDTH = 62;
-const BORDER_COLOR = '\x1b[38;2;99;102;241m';
+const BORDER_COLOR = '\x1b[38;2;0;117;222m'; // Notion Primary Blue #0075DE
 const RESET = '\x1b[0m';
 
 /**
@@ -26,7 +26,7 @@ function printStartupBanner(port, networkIp) {
   console.log('\n');
   console.log(borderTop);
   console.log(row(''));
-  console.log(row('   ▲  E  T  H  E  R', '   \x1b[38;2;129;140;248m▲  E  T  H  E  R\x1b[0m'));
+  console.log(row('   ▲  E  T  H  E  R', '   \x1b[38;2;0;117;222m\x1b[1m▲  E  T  H  E  R\x1b[0m'));
   console.log(
     row(
       '   Local-Network Markdown Note Engine',

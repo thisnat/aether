@@ -23,37 +23,40 @@ button {
   font-family: inherit;
   color: inherit;
   outline: none;
-  transition: all 0.15s ease;
+  transition: all 0.12s ease;
 }
 
 input,
 textarea {
   font-family: inherit;
   color: inherit;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border);
   background: var(--bg-card);
   border-radius: var(--radius-sm);
   outline: none;
-  transition: border-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 input:focus,
 textarea:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(0, 117, 222, 0.2);
 }
 
 .icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-xs);
   color: var(--text-muted);
 }
 
 .icon-btn:hover {
-  background: var(--bg-card-hover);
+  background: var(--bg-sidebar-hover);
   color: var(--text-main);
 }
 
@@ -61,10 +64,11 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 500;
+  line-height: 20px;
 }
 
 .accent-btn {
@@ -88,7 +92,7 @@ textarea:focus {
   justify-content: space-between;
   padding: 0 16px;
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-dim);
   user-select: none;
 }
 
@@ -96,11 +100,11 @@ textarea:focus {
 .statusbar-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .status-sep {
-  color: var(--border-focus);
+  color: var(--border-color);
 }
 
 .save-status {
@@ -110,8 +114,8 @@ textarea:focus {
 }
 
 .save-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--success);
 }
@@ -144,7 +148,7 @@ textarea:focus {
 
 /* Resizer Divider */
 .pane-resizer {
-  width: 6px;
+  width: 4px;
   cursor: col-resize;
   background: var(--border-color);
   transition: background 0.15s ease;
@@ -160,7 +164,7 @@ textarea:focus {
 /* Toast Notifications */
 .toast-container {
   position: fixed;
-  bottom: 44px;
+  bottom: 40px;
   right: 20px;
   display: flex;
   flex-direction: column;
@@ -173,21 +177,21 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 8px 14px;
   background: var(--bg-card);
   color: var(--text-main);
-  border: 1px solid var(--border-focus);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   font-size: 13px;
-  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -199,15 +203,15 @@ textarea:focus {
 .mobile-mode-fab {
   display: none;
   position: fixed;
-  bottom: 50px;
+  bottom: 44px;
   right: 18px;
   background: var(--accent);
   color: #ffffff;
-  padding: 10px 16px;
-  border-radius: 30px;
-  box-shadow: var(--shadow-lg);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-md);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   gap: 6px;
   align-items: center;
   z-index: 25;
