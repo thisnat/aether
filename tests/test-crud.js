@@ -1,25 +1,34 @@
 const { spawn } = require('child_process');
 const http = require('http');
 
-const child = spawn('node', ['server.js', '--port', '3459'], { stdio: ['ignore', 'pipe', 'pipe'] });
+const PORT = 3459;
+const child = spawn(process.execPath, ['server.js', '--port', String(PORT)], {
+  stdio: ['ignore', 'pipe', 'pipe'],
+});
 
 function req(method, path, body = null) {
   return new Promise((resolve, reject) => {
     const postData = body ? JSON.stringify(body) : null;
     const options = {
       hostname: 'localhost',
-      port: 3459,
+      port: PORT,
       path: path,
       method: method,
       headers: {
         'Content-Type': 'application/json',
-        ...(postData ? { 'Content-Length': Buffer.byteLength(postData) } : {})
-      }
+        ...(postData ? { 'Content-Length': Buffer.byteLength(postData) } : {}),
+      },
     };
     const r = http.request(options, (res) => {
       let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, body: data ? JSON.parse(data) : null }));
+      res.on('data', (chunk) => (data += chunk));
+      res.on('end', () => {
+        try {
+          resolve({ status: res.statusCode, body: data ? JSON.parse(data) : null });
+        } catch {
+          resolve({ status: res.statusCode, body: data });
+        }
+      });
     });
     r.on('error', reject);
     if (postData) r.write(postData);
@@ -27,28 +36,56 @@ function req(method, path, body = null) {
   });
 }
 
-setTimeout(async () => {
+// Wait for server to start responding
+async function waitForServer(maxAttempts = 30) {
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      const res = await req('GET', '/api/network');
+      if (res.status === 200) return true;
+    } catch {
+      // Wait 100ms before next retry
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  }
+  throw new Error('Server did not start in time');
+}
+
+(async () => {
   try {
-    console.log('1. Creating a new test note in vault...');
+    console.log('Waiting for Aether server on port ' + PORT + '...');
+    await waitForServer();
+
+    console.log('1. Checking Network API endpoint...');
+    const netRes = await req('GET', '/api/network');
+    console.log('Network primary IP:', netRes.body.primaryIp, 'Peer count:', netRes.body.peerCount);
+
+    console.log('2. Creating a new test note in vault...');
     const createRes = await req('POST', '/api/vault/file', {
       path: 'TestFolder/Live Note.md',
-      content: '# Live Note\n\nTesting live note creation [[Welcome to Aether]]'
+      content: '# Live Note\n\nTesting live note creation [[Welcome to Aether]]',
     });
     console.log('Created note:', createRes.body.title);
 
-    console.log('2. Fetching tree...');
+    console.log('3. Fetching tree...');
     const treeRes = await req('GET', '/api/vault/tree');
-    console.log('Tree items:', treeRes.body.tree.map(t => t.name));
+    console.log('Tree items:', treeRes.body.tree.map((t) => t.name));
 
-    console.log('3. Searching for "Live Note"...');
+    console.log('4. Searching for "Live Note"...');
     const searchRes = await req('GET', '/api/vault/search?q=Live%20Note');
     console.log('Search matches found:', searchRes.body.results.length);
 
-    console.log('4. Deleting test note...');
-    const delRes = await req('DELETE', '/api/vault/file?path=TestFolder/Live%20Note.md');
+    console.log('5. Renaming note...');
+    const renameRes = await req('POST', '/api/vault/rename', {
+      oldPath: 'TestFolder/Live Note.md',
+      newPath: 'TestFolder/Renamed Note.md',
+    });
+    console.log('Renamed note result:', renameRes.body);
+
+    console.log('6. Deleting test note...');
+    const delRes = await req('DELETE', '/api/vault/file?path=TestFolder/Renamed%20Note.md');
     console.log('Deleted note result:', delRes.body);
 
-    console.log('5. Deleting test folder...');
+    console.log('7. Deleting test folder...');
     const delFolderRes = await req('DELETE', '/api/vault/directory?path=TestFolder');
     console.log('Deleted folder result:', delFolderRes.body);
 
@@ -59,4 +96,4 @@ setTimeout(async () => {
   } finally {
     child.kill('SIGINT');
   }
-}, 1200);
+})();

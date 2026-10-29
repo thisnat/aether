@@ -1,6 +1,6 @@
 # ▲ Aether
 
-> A minimal, distraction-free markdown note-taking app built with Node.js, focused on seamless local-network sharing and Obsidian-compatible `.md` file handling.
+> A minimal, distraction-free markdown note-taking app built with Node.js and React, focused on seamless local-network sharing and Obsidian-compatible `.md` file handling.
 
 ---
 
@@ -20,22 +20,21 @@
   - **Interactive Checklists**: `- [ ]` and `- [x]` can be checked or unchecked directly inside the rendered preview, updating the raw markdown file automatically.
   - **Backlinks (Linked References)**: Automatically detects and displays other notes that link to the current note.
 
-- **🎨 Clean, Minimal & Fast UI**
+- **🎨 Clean, Modern & Modular UI (React + Vite)**
   - Modern typography and distraction-free workspace inspired by Obsidian, iA Writer, and Notion.
   - **Three Viewing Modes**:
-    - `◫ Split`: Side-by-side live editor and rendered markdown preview.
+    - `◫ Split`: Side-by-side live editor and rendered markdown preview with resizable divider.
     - `✏️ Edit`: Focused distraction-free markdown writing.
-    - `👁 Preview`: Clean reading mode with interactive checkboxes.
+    - `👁 Preview`: Clean reading mode with interactive checkboxes and backlinks.
   - **Markdown Toolbar & Smart Textarea**:
-    - Auto-pairing of brackets `()`, `[]`, `{}`, quotes `""`, and markdown tags `**`.
     - Tab / Shift+Tab for 2-space indentation and unindentation.
     - Automatic continuation of bullet lists `- `, numbered lists `1. `, and checklists `- [ ] `.
     - Syntax-highlighted code blocks with 1-click Copy button.
-  - **Dark & Light Modes**: Seamless toggle with persistent preference.
+  - **Dark & Light Modes**: Seamless toggle with persistent preference and matching syntax themes.
   - **Mobile Ready**: Fully responsive with slide-out navigation drawer for mobile browsers.
 
 - **🔍 Quick Switcher & Full-Text Search (`Ctrl + K` / `Ctrl + P`)**
-  - Instant fuzzy search across titles and note contents.
+  - Instant fuzzy search across titles and note contents with line snippets.
   - Keyboard navigation with Arrow keys and Enter to open.
 
 ---
@@ -47,34 +46,55 @@
 npm install
 ```
 
-### 2. Start the Server
+### 2. Development Mode
+Run both backend and client with hot-module replacement (HMR):
+```bash
+npm run dev
+```
+
+### 3. Production Build & Start
 ```bash
 npm start
 ```
+*(Running `npm start` automatically builds the React client and launches the server).*
 
-When you run `npm start`, Aether starts the engine, binds to all network interfaces (`0.0.0.0`), and prints the startup banner with links and a QR code:
+---
+
+## 📁 Project Architecture & Folder Structure
 
 ```
-  ┌──────────────────────────────────────────────────────────────┐
-  │                                                              │
-  │   ▲  E  T  H  E  R                                           │
-  │   Local-Network Markdown Note Engine                         │
-  │                                                              │
-  │   ●  Local:    http://localhost:3000                         │
-  │   ●  Network:  http://192.168.1.178:3000                     │
-  │                                                              │
-  │   Scan the QR code below on mobile to open notes instantly   │
-  └──────────────────────────────────────────────────────────────┘
-
-    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-    █ ▄▄▄▄▄ ██▀▀▄▄▄██▄█ ▄▄▄▄▄ █
-    █ █   █ █▀███ ▀ ▀ █ █   █ █
-    █ █▄▄▄█ █▄▄█▀▀▀ █▀█ █▄▄▄█ █
-    ...
+aether/
+├── src/
+│   ├── server/                         # Modular Node.js / Express / WebSocket backend
+│   │   ├── config/                     # CLI flags & environment variables parser
+│   │   ├── controllers/                # Thin HTTP request adapters (vault, network)
+│   │   ├── routes/                     # Clean Express route declarations
+│   │   ├── services/                   # Business logic (vault filesystem, websockets, chokidar watcher)
+│   │   ├── utils/                      # Network IP resolution, startup banner, note seeder
+│   │   ├── app.js                      # Express configuration & static serving
+│   │   └── index.js                    # Server lifecycle & graceful shutdown
+│   │
+│   └── client/                         # Declarative, high-performance React + Vite frontend
+│       ├── components/
+│       │   ├── Header/                 # Topbar, breadcrumb, mode switcher, theme toggle
+│       │   ├── Sidebar/                # File tree, folders, notes, search trigger
+│       │   ├── Editor/                 # Note title input, markdown toolbar, smart textarea
+│       │   ├── Preview/                # Rendered markdown, task checkboxes, backlinks
+│       │   ├── Modals/                 # Network QR modal, Quick switcher (Ctrl+K), Prompts
+│       │   └── Common/                 # Status bar, resizer, toast notifications
+│       ├── hooks/                      # Custom hooks (useVault, useWebSocket, useTheme, useKeyboardShortcuts)
+│       ├── services/                   # REST API client & WebSocket client
+│       ├── utils/                      # Markdown parser, wikilinks, formatting stats
+│       ├── styles/                     # Modular CSS (variables, base, components, markdown)
+│       ├── App.jsx                     # Root application coordinator
+│       └── main.jsx                    # React entry point
+│
+├── dist/                               # Production-built client bundle (auto-generated)
+├── vault/                              # Plain markdown files (Obsidian-compatible)
+├── tests/                              # Automated integration tests
+├── server.js                           # Root entrypoint delegate
+└── vite.config.mjs                     # Vite build & proxy configuration
 ```
-
-- On your computer: Open **`http://localhost:3000`** in your browser.
-- On your phone or tablet: Make sure you're on the same Wi-Fi, then scan the terminal QR code or visit **`http://<your-lan-ip>:3000`**.
 
 ---
 
@@ -89,37 +109,8 @@ When you run `npm start`, Aether starts the engine, binds to all network interfa
 | **Ctrl + \\** | Toggle sidebar visibility |
 | **Ctrl + B** | Bold text selection |
 | **Ctrl + I** | Italic text selection |
-| **Tab** / **Shift + Tab** | Indent / unindent selection |
+| **Tab** / **Shift + Tab** | Indent / unindent selection (2 spaces) |
 | **Esc** | Close any active modal or search box |
-
----
-
-## 📁 Vault Structure
-
-All notes live in plain `.md` files inside `./vault/`:
-
-```
-aether/
-├── vault/                         <-- Your plain markdown files
-│   ├── Welcome to Aether.md
-│   ├── Quick Start.md
-│   └── Guides/
-│       └── Formatting Demo.md
-├── public/                        <-- Clean minimal web UI
-│   ├── index.html
-│   ├── css/style.css
-│   └── js/
-│       ├── app.js
-│       ├── editor.js
-│       ├── markdown.js
-│       └── socket.js
-├── lib/
-│   ├── vault.js                   <-- File system & markdown handling
-│   └── network.js                 <-- LAN IP resolution & QR codes
-└── server.js                      <-- Express + WebSockets server
-```
-
-You can point Obsidian or any text editor directly at the `vault/` folder. Any notes you add, edit, or delete from external tools are instantly synchronized across all devices in real time.
 
 ---
 
@@ -132,17 +123,17 @@ You can customize the port or vault location using flags or environment variable
 node server.js --port 8080
 
 # Specify custom vault directory
-node server.js --vault "D:/MyObsidianVault"
+node server.js --vault "/path/to/MyObsidianVault"
 
 # Or using environment variables:
-PORT=8080 VAULT_DIR="D:/MyObsidianVault" npm start
+PORT=8080 VAULT_DIR="/path/to/MyObsidianVault" npm start
 ```
 
 ---
 
 ## 🧪 Testing
 
-Run automated tests verifying note creation, folder management, search, and deletion:
+Run automated tests verifying note creation, folder management, rename, search, and deletion:
 ```bash
 npm test
 ```
