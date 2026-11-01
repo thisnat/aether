@@ -1,9 +1,70 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { MarkdownToolbar } from './MarkdownToolbar';
 
-export function EditorPane({ activeNote, onContentChange, onTitleRename, onForceSave }) {
+export function EditorPane({
+  activeNote,
+  onContentChange,
+  onTitleRename,
+  onForceSave,
+  onSelectionChange,
+}) {
   const textareaRef = useRef(null);
   const titleInputRef = useRef(null);
+
+  // Update selection count
+  const updateSelection = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea || document.activeElement !== textarea) {
+      onSelectionChange?.(0);
+      return;
+    }
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const count =
+      typeof start === 'number' && typeof end === 'number' && end > start ? end - start : 0;
+    onSelectionChange?.(count);
+  }, [onSelectionChange]);
+
+  // Reset selection when active note changes
+  useEffect(() => {
+    onSelectionChange?.(0);
+  }, [activeNote?.path, onSelectionChange]);
+
+  // Global listeners: pointerdown outside, selectionchange, and window blur
+  useEffect(() => {
+    const handleDocPointerDown = (e) => {
+      // If clicking outside textarea and not on markdown toolbar, clear selection count immediately
+      if (
+        textareaRef.current &&
+        e.target !== textareaRef.current &&
+        !e.target.closest?.('.markdown-toolbar')
+      ) {
+        onSelectionChange?.(0);
+      }
+    };
+
+    const handleDocSelectionChange = () => {
+      if (document.activeElement === textareaRef.current) {
+        updateSelection();
+      } else {
+        onSelectionChange?.(0);
+      }
+    };
+
+    const handleWindowBlur = () => {
+      onSelectionChange?.(0);
+    };
+
+    document.addEventListener('pointerdown', handleDocPointerDown);
+    document.addEventListener('selectionchange', handleDocSelectionChange);
+    window.addEventListener('blur', handleWindowBlur);
+
+    return () => {
+      document.removeEventListener('pointerdown', handleDocPointerDown);
+      document.removeEventListener('selectionchange', handleDocSelectionChange);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [updateSelection, onSelectionChange]);
 
   useEffect(() => {
     if (titleInputRef.current && activeNote) {
@@ -29,6 +90,7 @@ export function EditorPane({ activeNote, onContentChange, onTitleRename, onForce
     textarea.focus();
 
     onContentChange(newVal);
+    onSelectionChange?.(selected.length);
   };
 
   const handleToolbarAction = (action) => {
@@ -85,6 +147,14 @@ export function EditorPane({ activeNote, onContentChange, onTitleRename, onForce
     const isCmd = ctrlKey || metaKey;
     const textarea = textareaRef.current;
     if (!textarea) return;
+
+    if (key === 'Escape') {
+      if (textarea.selectionStart !== textarea.selectionEnd) {
+        textarea.selectionEnd = textarea.selectionStart;
+        onSelectionChange?.(0);
+        return;
+      }
+    }
 
     if (isCmd && key.toLowerCase() === 's') {
       e.preventDefault();
@@ -238,7 +308,19 @@ export function EditorPane({ activeNote, onContentChange, onTitleRename, onForce
         }
         disabled={!activeNote}
         value={activeNote?.content ?? ''}
-        onChange={(e) => onContentChange(e.target.value)}
+        onChange={(e) => {
+          onContentChange(e.target.value);
+          updateSelection();
+        }}
+        onSelect={updateSelection}
+        onKeyUp={updateSelection}
+        onMouseUp={updateSelection}
+        onClick={updateSelection}
+        onBlur={(e) => {
+          if (!e.relatedTarget?.closest?.('.markdown-toolbar')) {
+            onSelectionChange?.(0);
+          }
+        }}
         onKeyDown={handleKeyDown}
         spellCheck="true"
       />

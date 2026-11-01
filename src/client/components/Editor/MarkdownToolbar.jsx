@@ -17,7 +17,7 @@ import {
 
 export function MarkdownToolbar({ onAction }) {
   return (
-    <div className="markdown-toolbar">
+    <div className="markdown-toolbar" onMouseDown={(e) => e.preventDefault()}>
       <button type="button" onClick={() => onAction('bold')} title="Bold (Ctrl+B)">
         <Bold size={13} />
       </button>

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { calculateNoteStats } from '../../utils/formatters';
 
-export function StatusBar({ saveStatus, content = '' }) {
+export function StatusBar({ saveStatus, content = '', selectionCount = 0 }) {
   const stats = useMemo(() => {
     return calculateNoteStats(content);
   }, [content]);
@@ -27,6 +27,14 @@ export function StatusBar({ saveStatus, content = '' }) {
       </div>
 
       <div className="statusbar-right">
+        {selectionCount > 0 && (
+          <>
+            <span className="status-selection">
+              {selectionCount} {selectionCount === 1 ? 'character' : 'characters'} selected
+            </span>
+            <span className="status-sep">/</span>
+          </>
+        )}
         <span>
           {stats.words} word{stats.words === 1 ? '' : 's'}
         </span>

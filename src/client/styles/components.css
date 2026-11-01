@@ -521,6 +521,11 @@
   flex-direction: column;
 }
 
+/* Selection Counter in StatusBar Right (aligned with words & characters) */
+.status-selection {
+  color: var(--text-dim);
+}
+
 #markdown-editor {
   flex: 1;
   width: 100%;

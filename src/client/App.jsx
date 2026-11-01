@@ -35,6 +35,7 @@ export function App() {
 
   // Network & Sharing info
   const [networkInfo, setNetworkInfo] = useState(null);
+  const [selectionCount, setSelectionCount] = useState(0);
 
   // Graph Data
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
@@ -375,6 +376,7 @@ export function App() {
               <EditorPane
                 activeNote={vault.activeNote}
                 onContentChange={vault.handleContentChange}
+                onSelectionChange={setSelectionCount}
                 onTitleRename={async (val) => {
                   await vault.renameActiveNote(val);
                   loadGraphData();
@@ -424,7 +426,11 @@ export function App() {
             <span>{viewMode === 'edit' ? 'Preview' : 'Edit'}</span>
           </button>
 
-          <StatusBar saveStatus={vault.saveStatus} content={vault.activeNote?.content || ''} />
+          <StatusBar
+            saveStatus={vault.saveStatus}
+            content={vault.activeNote?.content || ''}
+            selectionCount={selectionCount}
+          />
         </main>
       </div>
 
