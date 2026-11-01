@@ -9,6 +9,7 @@ export function GraphModal({
   activePath,
   onSelectNote,
   isDark = true,
+  theme = 'notion',
 }) {
   const [filterQuery, setFilterQuery] = useState('');
   const containerRef = useRef(null);
@@ -97,6 +98,7 @@ export function GraphModal({
             width={dimensions.width}
             height={dimensions.height}
             isDark={isDark}
+            theme={theme}
             interactive={true}
           />
         </div>

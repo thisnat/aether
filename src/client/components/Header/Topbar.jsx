@@ -1,6 +1,7 @@
 import React from 'react';
 import { PanelLeft, Share2, Sun, Moon, GitFork } from 'lucide-react';
 import { ModeSwitcher } from './ModeSwitcher';
+import { ThemePicker } from './ThemePicker';
 
 export function Topbar({
   activeNotePath,
@@ -8,11 +9,17 @@ export function Topbar({
   onSelectMode,
   peerCount,
   theme,
+  colorMode = 'dark',
+  availableThemes = [],
+  onSelectTheme,
+  onToggleColorMode,
   onToggleTheme,
   onToggleSidebar,
   onOpenNetworkModal,
   onOpenGraphModal,
 }) {
+  const handleToggleColor = onToggleColorMode || onToggleTheme;
+
   return (
     <header className="topbar">
       <div className="topbar-left">
@@ -75,13 +82,21 @@ export function Topbar({
           <span className="btn-label">Share on Network</span>
         </button>
 
+        <ThemePicker
+          currentTheme={theme}
+          colorMode={colorMode}
+          availableThemes={availableThemes}
+          onSelectTheme={onSelectTheme}
+          onToggleColorMode={handleToggleColor}
+        />
+
         <button
           type="button"
           className="icon-btn"
-          onClick={onToggleTheme}
-          title="Toggle Dark/Light Mode"
+          onClick={handleToggleColor}
+          title={colorMode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          {colorMode === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
         </button>
       </div>
     </header>

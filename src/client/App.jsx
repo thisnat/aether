@@ -20,7 +20,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import * as api from './services/api';
 
 export function App() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme, colorMode, toggleColorMode, isDark, availableThemes } = useTheme();
 
   // Layout states
   const [viewMode, setViewMode] = useState(() => {
@@ -253,7 +253,10 @@ export function App() {
         onSelectMode={handleSelectMode}
         peerCount={peerCount}
         theme={theme}
-        onToggleTheme={toggleTheme}
+        colorMode={colorMode}
+        availableThemes={availableThemes}
+        onSelectTheme={setTheme}
+        onToggleColorMode={toggleColorMode}
         onToggleSidebar={() => {
           if (window.innerWidth <= 768) {
             setSidebarMobileOpen((prev) => !prev);
@@ -366,7 +369,8 @@ export function App() {
               <PreviewPane
                 activeNote={vault.activeNote}
                 graphData={graphData}
-                isDark={theme === 'dark'}
+                isDark={isDark}
+                theme={theme}
                 onToggleCheckbox={vault.toggleCheckbox}
                 onWikilinkClick={handleWikilinkClick}
                 onSelectNote={vault.openNote}
@@ -414,7 +418,8 @@ export function App() {
         graphData={graphData}
         activePath={vault.activeNote?.path}
         onSelectNote={vault.openNote}
-        isDark={theme === 'dark'}
+        isDark={isDark}
+        theme={theme}
       />
 
       {promptConfig && (

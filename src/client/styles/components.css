@@ -2,6 +2,7 @@
    TOPBAR - Notion Workspace Style
    ======================================================== */
 .topbar {
+  position: relative;
   height: var(--topbar-height);
   min-height: var(--topbar-height);
   background: var(--bg-app);
@@ -24,10 +25,23 @@
 .topbar-left {
   flex: 1;
   min-width: 0;
+  max-width: calc(50% - 120px);
+}
+
+.topbar-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  pointer-events: auto;
 }
 
 .topbar-right {
   justify-content: flex-end;
+  margin-left: auto;
 }
 
 .brand {
@@ -215,6 +229,16 @@
   flex: 1;
   overflow-y: auto;
   padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Remove hover animations inside sidebar content for instant, snappy feedback */
+.sidebar-content,
+.sidebar-content * {
+  transition: none !important;
+  animation: none !important;
 }
 
 /* Tree Nodes */
@@ -228,23 +252,27 @@
 }
 
 .tree-folder {
-  margin-bottom: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .tree-folder-header,
 .tree-file {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 8px;
+  padding: 0 8px;
+  height: 28px;
+  margin: 0;
   border-radius: var(--radius-xs);
   cursor: pointer;
   font-size: 13px;
   color: var(--text-muted);
   user-select: none;
-  transition:
-    background 0.1s ease,
-    color 0.1s ease;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .tree-folder-header:hover,
@@ -265,12 +293,15 @@
   gap: 6px;
   min-width: 0;
   flex: 1;
+  padding-right: 48px;
+  overflow: hidden;
 }
 
 .tree-item-title span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
 }
 
 .folder-arrow {
@@ -279,7 +310,7 @@
   justify-content: center;
   width: 14px;
   height: 14px;
-  transition: transform 0.15s ease;
+  flex-shrink: 0;
 }
 
 .tree-folder.open > .tree-folder-header .folder-arrow {
@@ -292,18 +323,27 @@
 }
 
 .tree-folder.open > .tree-folder-children {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .tree-actions {
-  display: none;
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
   align-items: center;
   gap: 2px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .tree-folder-header:hover .tree-actions,
 .tree-file:hover .tree-actions {
-  display: flex;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .tree-action-icon {
@@ -406,8 +446,9 @@
   width: 100%;
   border: none;
   background: transparent;
-  font-size: 32px;
-  font-weight: 700;
+  font-family: var(--font-title, var(--font-ui));
+  font-size: var(--title-size, 32px);
+  font-weight: var(--title-weight, 700);
   line-height: 1.25;
   letter-spacing: -0.015em;
   color: var(--text-main);
@@ -514,9 +555,12 @@
 
 /* Backlinks Container */
 .backlinks-container {
+  width: 100%;
+  max-width: 820px;
+  margin: 24px auto 0 auto;
   padding: 16px 0;
   border-top: 1px solid var(--border-color);
-  margin-top: 24px;
+  box-sizing: border-box;
 }
 
 .backlinks-header {
@@ -927,6 +971,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .topbar-left {
+    max-width: none;
+  }
+
   .topbar-center {
     display: none;
   }
@@ -1047,11 +1095,14 @@
 
 /* Local Graph Container inside Note */
 .local-graph-container {
-  margin-top: 24px;
+  width: 100%;
+  max-width: 820px;
+  margin: 24px auto 0 auto;
   border: 1px solid var(--border-color);
   background: var(--bg-card);
   border-radius: var(--radius-md);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .local-graph-header {
@@ -1090,11 +1141,20 @@
 }
 
 .local-graph-canvas-wrapper {
+  width: 100%;
+  height: 220px;
   background: var(--bg-app);
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  position: relative;
+}
+
+.local-graph-canvas-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
 /* Global Graph Modal Card */
@@ -1181,4 +1241,186 @@
 
 .graph-active-label strong {
   color: var(--accent);
+}
+
+/* ========================================================
+   THEME PICKER DROPDOWN
+   ======================================================== */
+.theme-picker-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.theme-picker-trigger.active {
+  background: var(--bg-sidebar-hover);
+  color: var(--accent);
+}
+
+.theme-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 230px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  z-index: 1000;
+  animation: fadeInDown 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.theme-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+
+.theme-dropdown-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.theme-dropdown-badge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.theme-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.theme-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 8px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-main);
+  text-align: left;
+  width: 100%;
+  transition: background 0.12s ease;
+}
+
+.theme-option-item:hover {
+  background: var(--bg-sidebar-hover);
+}
+
+.theme-option-item.selected {
+  background: var(--bg-card-accent);
+}
+
+.theme-option-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+
+[data-theme='ephemera'] .theme-swatch,
+[data-theme='arena'] .theme-swatch {
+  border-radius: 0px;
+}
+
+.theme-option-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.theme-option-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.theme-option-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.theme-check-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.theme-dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 6px 0;
+}
+
+.theme-dropdown-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+}
+
+.theme-mode-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.theme-mode-pills {
+  display: flex;
+  align-items: center;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.theme-mode-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-radius: var(--radius-xs);
+  transition: all 0.12s ease;
+}
+
+.theme-mode-pill.active {
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
 }

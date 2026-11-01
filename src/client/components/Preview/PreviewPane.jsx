@@ -8,6 +8,7 @@ export function PreviewPane({
   activeNote,
   graphData,
   isDark = true,
+  theme = 'notion',
   onToggleCheckbox,
   onWikilinkClick,
   onSelectNote,
@@ -97,6 +98,7 @@ export function PreviewPane({
         onSelectNote={onSelectNote}
         onOpenGlobalGraph={onOpenGlobalGraph}
         isDark={isDark}
+        theme={theme}
       />
 
       {/* Backlinks */}

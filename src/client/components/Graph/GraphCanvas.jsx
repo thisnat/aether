@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
+import { getTheme } from '../../themes';
 
 /**
  * Ultra-High Performance HTML5 2D Canvas Force-Directed Node Graph
@@ -16,6 +17,7 @@ export function GraphCanvas({
   width = 600,
   height = 400,
   isDark = true,
+  theme = 'notion',
   interactive = true,
 }) {
   const canvasRef = useRef(null);
@@ -34,32 +36,44 @@ export function GraphCanvas({
   const isPanningRef = useRef(false);
   const panStartRef = useRef({ x: 0, y: 0 });
 
-  // Colors per style.md (Notion Design System)
-  const colors = isDark
-    ? {
-        bg: '#191919',
-        node: '#615D59',
-        nodeActive: '#0075DE',
-        nodeHover: '#097FE8',
-        nodeConnected: '#27918D',
-        link: 'rgba(255, 255, 255, 0.12)',
-        linkActive: 'rgba(0, 117, 222, 0.8)',
-        text: 'rgba(255, 255, 255, 0.92)',
-        textActive: '#FFFFFF',
-        textDim: '#6B6B6B',
-      }
-    : {
-        bg: '#FFFFFF',
-        node: '#A39E98',
-        nodeActive: '#0075DE',
-        nodeHover: '#097FE8',
-        nodeConnected: '#27918D',
-        link: 'rgba(0, 0, 0, 0.08)',
-        linkActive: 'rgba(0, 117, 222, 0.75)',
-        text: 'rgba(0, 0, 0, 0.898)',
-        textActive: '#000000',
-        textDim: '#A39E98',
-      };
+  // Colors resolved dynamically from JSON theme definition
+  const colors = useMemo(() => {
+    const themeDef = typeof theme === 'object' && theme?.graph ? theme : getTheme(theme);
+    const modeKey = isDark ? 'dark' : 'light';
+    const graphColors = themeDef?.graph?.[modeKey];
+
+    if (graphColors) {
+      return graphColors;
+    }
+
+    return isDark
+      ? {
+          bg: '#191919',
+          node: '#615D59',
+          nodeActive: '#0075DE',
+          nodeHover: '#097FE8',
+          nodeConnected: '#27918D',
+          link: 'rgba(255, 255, 255, 0.12)',
+          linkActive: 'rgba(0, 117, 222, 0.8)',
+          linkDim: 'rgba(255, 255, 255, 0.04)',
+          text: 'rgba(255, 255, 255, 0.92)',
+          textActive: '#FFFFFF',
+          textDim: '#6B6B6B',
+        }
+      : {
+          bg: '#FFFFFF',
+          node: '#A39E98',
+          nodeActive: '#0075DE',
+          nodeHover: '#097FE8',
+          nodeConnected: '#27918D',
+          link: 'rgba(0, 0, 0, 0.08)',
+          linkActive: 'rgba(0, 117, 222, 0.75)',
+          linkDim: 'rgba(0, 0, 0, 0.03)',
+          text: 'rgba(0, 0, 0, 0.898)',
+          textActive: '#000000',
+          textDim: '#A39E98',
+        };
+  }, [theme, isDark]);
 
   // Wake up simulation loop
   const wakeSimulation = useCallback(() => {
@@ -118,6 +132,11 @@ export function GraphCanvas({
     alphaRef.current = 1;
     wakeSimulation();
   }, [nodes, links, width, height, wakeSimulation]);
+
+  // Wake simulation to repaint on color/theme changes
+  useEffect(() => {
+    wakeSimulation();
+  }, [colors, wakeSimulation]);
 
   // Main physics tick & draw
   const runTick = useCallback(() => {
@@ -256,7 +275,7 @@ export function GraphCanvas({
         : isRelatedToActive
           ? colors.linkActive
           : hovered
-            ? 'rgba(79, 88, 117, 0.12)'
+            ? colors.linkDim
             : colors.link;
 
       ctx.beginPath();

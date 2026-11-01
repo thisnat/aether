@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { GitFork, ChevronDown, ChevronUp, Maximize2 } from 'lucide-react';
 import { GraphCanvas } from './GraphCanvas';
 
@@ -8,10 +8,12 @@ export function LocalGraph({
   onSelectNote,
   onOpenGlobalGraph,
   isDark = true,
+  theme = 'notion',
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 340, height: 220 });
+  const roRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 220 });
 
   // Filter local graph: only the active node + 1st degree neighbors
   const localGraph = useMemo(() => {
@@ -49,21 +51,55 @@ export function LocalGraph({
     };
   }, [graphData, activePath]);
 
-  // Track container width
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setDimensions({
-          width: Math.max(200, Math.floor(entry.contentRect.width)),
-          height: 220,
-        });
-      }
-    });
+  // Callback ref guarantees measurement and ResizeObserver setup the moment the DOM element mounts
+  const setContainerNode = useCallback((node) => {
+    containerRef.current = node;
+    if (roRef.current) {
+      roRef.current.disconnect();
+      roRef.current = null;
+    }
 
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
+    if (node) {
+      const updateSize = () => {
+        const w = node.clientWidth;
+        if (w > 0) {
+          setDimensions((prev) => (prev.width === w ? prev : { width: w, height: 220 }));
+        }
+      };
+
+      updateSize();
+
+      const observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const w = Math.floor(entry.contentRect.width);
+          if (w > 0) {
+            setDimensions((prev) => (prev.width === w ? prev : { width: w, height: 220 }));
+          }
+        }
+      });
+
+      observer.observe(node);
+      roRef.current = observer;
+    }
+  }, []);
+
+  // Ensure size is accurate when toggling collapsed
+  useEffect(() => {
+    if (!collapsed && containerRef.current) {
+      const w = containerRef.current.clientWidth;
+      if (w > 0) {
+        setDimensions((prev) => (prev.width === w ? prev : { width: w, height: 220 }));
+      }
+    }
   }, [collapsed]);
+
+  useEffect(() => {
+    return () => {
+      if (roRef.current) {
+        roRef.current.disconnect();
+      }
+    };
+  }, []);
 
   if (!activePath || localGraph.nodes.length <= 1) {
     // Only show if there are references / neighbors or user wants graph
@@ -71,7 +107,7 @@ export function LocalGraph({
   }
 
   return (
-    <div className="local-graph-container" ref={containerRef}>
+    <div className="local-graph-container" ref={setContainerNode}>
       <div className="local-graph-header">
         <div className="local-graph-title" onClick={() => setCollapsed(!collapsed)}>
           <GitFork size={13} />
@@ -100,6 +136,7 @@ export function LocalGraph({
             width={dimensions.width}
             height={dimensions.height}
             isDark={isDark}
+            theme={theme}
             interactive={true}
           />
         </div>
