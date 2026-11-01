@@ -8,6 +8,24 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, 'dist'),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('scheduler')) {
+              return 'vendor-react';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('marked') || id.includes('highlight.js')) {
+              return 'vendor-markdown';
+            }
+            return 'vendor-libs';
+          }
+        },
+      },
+    },
   },
   server: {
     port: 5173,

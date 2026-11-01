@@ -38,6 +38,16 @@ function getNetworkAddresses() {
   };
 }
 
+/**
+ * Check if an IP address belongs to the local machine (loopback).
+ */
+function isLoopbackAddress(ip) {
+  if (!ip) return false;
+  const cleanIp = ip.replace(/^::ffff:/, '');
+  return cleanIp === '127.0.0.1' || cleanIp === '::1' || cleanIp === 'localhost';
+}
+
 module.exports = {
   getNetworkAddresses,
+  isLoopbackAddress,
 };

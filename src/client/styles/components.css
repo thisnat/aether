@@ -133,6 +133,10 @@
   background: var(--success);
 }
 
+.peer-indicator.disabled {
+  background: var(--text-dim);
+}
+
 /* ========================================================
    SIDEBAR & TREE - Clean Notion Explorer
    ======================================================== */
@@ -629,13 +633,14 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  width: 90%;
-  max-width: 440px;
+  width: 440px;
+  max-width: 92vw;
   box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   animation: zoomIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
 .modal-card.small-modal {
@@ -757,6 +762,133 @@
 }
 
 /* Network Share Modal specifics */
+.network-toggle-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-sidebar);
+  margin-bottom: 4px;
+}
+
+.network-toggle-box.is-active {
+  border-color: rgba(39, 145, 141, 0.4);
+  background: var(--accent-light);
+}
+
+.network-toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.network-status-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.network-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.network-status-dot.active {
+  background: var(--success);
+  box-shadow: 0 0 6px var(--success);
+}
+
+.network-status-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.network-toggle-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.network-power-btn {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-xs);
+  background: var(--accent);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.network-power-btn:hover {
+  background: var(--accent-hover);
+}
+
+.network-power-btn.active {
+  background: var(--bg-card);
+  color: var(--danger);
+  border: 1px solid var(--border-color);
+}
+
+.network-power-btn.active:hover {
+  background: rgba(235, 87, 87, 0.12);
+  border-color: var(--danger);
+}
+
+/* Network Disabled Notice Card */
+.network-disabled-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 200px;
+  box-sizing: border-box;
+  padding: 20px;
+  background: var(--bg-app);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+  gap: 8px;
+}
+
+.network-disabled-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-sidebar-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.network-disabled-card h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.network-disabled-card p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  max-width: 340px;
+  line-height: 1.5;
+}
+
 .qr-container {
   display: flex;
   align-items: center;
@@ -846,16 +978,102 @@
 
 .network-stats-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 12px;
-  padding: 8px 12px;
+  gap: 12px;
+  padding: 10px 14px;
   background: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
+  box-sizing: border-box;
 }
 
-.stat-label {
-  color: var(--text-dim);
-  margin-right: 6px;
+.peer-info-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.peer-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.peer-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.peer-main-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.peer-sub-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+
+.peer-info-right {
+  flex-shrink: 0;
+}
+
+.peer-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.peer-status-pill.ready {
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid rgba(0, 117, 222, 0.2);
+}
+
+.peer-status-pill.sync {
+  background: rgba(39, 145, 141, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(39, 145, 141, 0.3);
+}
+
+.peer-status-pill.idle {
+  background: var(--bg-app);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.peer-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 5px currentColor;
+}
+
+.peer-dot-idle {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
 }
 
 /* Quick Switcher / Search Modal */

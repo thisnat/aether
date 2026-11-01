@@ -6,11 +6,11 @@
 
 ## ✨ Features
 
-- **🌐 Zero-Config Local Network Sharing**
-  - Automatically detects your local Wi-Fi / LAN IP (e.g. `192.168.1.178:3000`).
-  - Terminal prints both **Local** and **Network** URLs, plus a **QR Code** you can scan with your phone's camera.
-  - In-app **Share on Network** modal with a high-resolution QR code and 1-click link copying.
-  - Real-time synchronization across phones, tablets, and computers on the same Wi-Fi using WebSockets.
+- **🌐 On-Demand Local Network Sharing**
+  - Private by default: Network sharing is disabled on launch so incoming connections from other devices are blocked until enabled.
+  - One-click sharing: Enable Wi-Fi sharing on demand via the topbar Share modal to broadcast to phones, tablets, or other computers.
+  - In-app **Share on Network** modal with instant toggle control, high-resolution QR code, and one-click link copying.
+  - Real-time synchronization across connected devices using WebSockets.
   - Live active peer counter (know how many devices are connected).
 
 - **📝 100% Obsidian Compatible & Node Graph View**
@@ -107,8 +107,11 @@ node server.js --port 8080
 # Specify custom vault directory
 node server.js --vault "/path/to/MyObsidianVault"
 
+# Enable network sharing immediately on boot (default: disabled)
+node server.js --share
+
 # Or using environment variables:
-PORT=8080 VAULT_DIR="/path/to/MyObsidianVault" npm start
+PORT=8080 VAULT_DIR="/path/to/MyObsidianVault" SHARE=true npm start
 ```
 
 ---

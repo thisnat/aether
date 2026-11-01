@@ -8,6 +8,7 @@ export function Topbar({
   mode,
   onSelectMode,
   peerCount,
+  networkSharingEnabled = false,
   theme,
   colorMode = 'dark',
   availableThemes = [],
@@ -60,26 +61,42 @@ export function Topbar({
           <GitFork size={17} />
         </button>
 
-        <button
-          type="button"
-          className="peer-badge"
-          onClick={onOpenNetworkModal}
-          title="Local network sharing info"
-        >
-          <span className="peer-indicator" />
-          <span>
-            {peerCount} device{peerCount === 1 ? '' : 's'}
-          </span>
-        </button>
+        {networkSharingEnabled ? (
+          <button
+            type="button"
+            className="peer-badge active"
+            onClick={onOpenNetworkModal}
+            title="Local network sharing is active"
+          >
+            <span className="peer-indicator" />
+            <span>
+              {peerCount} device{peerCount === 1 ? '' : 's'}
+            </span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="peer-badge disabled"
+            onClick={onOpenNetworkModal}
+            title="Local network sharing is disabled (localhost only)"
+          >
+            <span className="peer-indicator disabled" />
+            <span>Local only</span>
+          </button>
+        )}
 
         <button
           type="button"
-          className="action-btn accent-btn"
+          className={`action-btn ${networkSharingEnabled ? 'accent-btn' : 'secondary-btn'}`}
           onClick={onOpenNetworkModal}
-          title="Share with phones & devices on local Wi-Fi"
+          title={
+            networkSharingEnabled
+              ? 'Local network sharing is active'
+              : 'Local network sharing is disabled - click to enable'
+          }
         >
           <Share2 size={15} />
-          <span className="btn-label">Share on Network</span>
+          <span className="btn-label">{networkSharingEnabled ? 'Sharing On' : 'Share'}</span>
         </button>
 
         <ThemePicker

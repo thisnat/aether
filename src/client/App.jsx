@@ -11,7 +11,10 @@ import { NetworkModal } from './components/Modals/NetworkModal';
 import { SearchModal } from './components/Modals/SearchModal';
 import { PromptModal } from './components/Modals/PromptModal';
 import { ConfirmModal } from './components/Modals/ConfirmModal';
-import { GraphModal } from './components/Graph/GraphModal';
+
+const GraphModal = React.lazy(() =>
+  import('./components/Graph/GraphModal').then((m) => ({ default: m.GraphModal }))
+);
 
 import { useTheme } from './hooks/useTheme';
 import { useWebSocket } from './hooks/useWebSocket';
@@ -107,7 +110,34 @@ export function App() {
       loadGraphData();
     },
     onExternalChange: handleExternalVaultChange,
+    onSharingChanged: (sharingEnabled) => {
+      setNetworkInfo((prev) => (prev ? { ...prev, sharingEnabled } : prev));
+    },
   });
+
+  // Toggle network sharing state
+  const handleToggleNetworkSharing = useCallback(
+    async (desiredState) => {
+      try {
+        const targetState =
+          typeof desiredState === 'boolean' ? desiredState : !networkInfo?.sharingEnabled;
+        const res = await api.setNetworkSharing(targetState);
+        setNetworkInfo((prev) => ({
+          ...prev,
+          sharingEnabled: res.sharingEnabled,
+        }));
+        showToast(
+          res.sharingEnabled
+            ? 'Local network sharing enabled'
+            : 'Local network sharing disabled (localhost only)'
+        );
+      } catch (err) {
+        console.error('Failed to toggle network sharing:', err);
+        showToast('Error changing network sharing state');
+      }
+    },
+    [networkInfo?.sharingEnabled, showToast]
+  );
 
   // Vault state
   const vault = useVault({ clientId, showToast });
@@ -252,6 +282,7 @@ export function App() {
         mode={viewMode}
         onSelectMode={handleSelectMode}
         peerCount={peerCount}
+        networkSharingEnabled={networkInfo?.sharingEnabled}
         theme={theme}
         colorMode={colorMode}
         availableThemes={availableThemes}
@@ -403,6 +434,7 @@ export function App() {
         onClose={() => setIsNetworkModalOpen(false)}
         networkInfo={networkInfo}
         peerCount={peerCount}
+        onToggleSharing={handleToggleNetworkSharing}
       />
 
       <SearchModal
@@ -412,15 +444,19 @@ export function App() {
         onSelectNote={vault.openNote}
       />
 
-      <GraphModal
-        isOpen={isGraphModalOpen}
-        onClose={() => setIsGraphModalOpen(false)}
-        graphData={graphData}
-        activePath={vault.activeNote?.path}
-        onSelectNote={vault.openNote}
-        isDark={isDark}
-        theme={theme}
-      />
+      {isGraphModalOpen && (
+        <React.Suspense fallback={null}>
+          <GraphModal
+            isOpen={isGraphModalOpen}
+            onClose={() => setIsGraphModalOpen(false)}
+            graphData={graphData}
+            activePath={vault.activeNote?.path}
+            onSelectNote={vault.openNote}
+            isDark={isDark}
+            theme={theme}
+          />
+        </React.Suspense>
+      )}
 
       {promptConfig && (
         <PromptModal

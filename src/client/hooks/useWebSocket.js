@@ -1,15 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { NetworkSocket } from '../services/socket';
 
-export function useWebSocket({ onNoteSaved, onTreeChanged, onExternalChange }) {
+export function useWebSocket({ onNoteSaved, onTreeChanged, onExternalChange, onSharingChanged }) {
   const [peerCount, setPeerCount] = useState(1);
   const [clientId, setClientId] = useState(null);
   const socketRef = useRef(null);
 
   // Store latest handlers in refs to avoid reconnecting socket on function changes
-  const handlersRef = useRef({ onNoteSaved, onTreeChanged, onExternalChange });
+  const handlersRef = useRef({
+    onNoteSaved,
+    onTreeChanged,
+    onExternalChange,
+    onSharingChanged,
+  });
   useEffect(() => {
-    handlersRef.current = { onNoteSaved, onTreeChanged, onExternalChange };
+    handlersRef.current = {
+      onNoteSaved,
+      onTreeChanged,
+      onExternalChange,
+      onSharingChanged,
+    };
   });
 
   useEffect(() => {
@@ -20,6 +30,9 @@ export function useWebSocket({ onNoteSaved, onTreeChanged, onExternalChange }) {
       },
       onPeerCount: (count) => {
         setPeerCount(count);
+      },
+      onSharingChanged: (sharingEnabled, count) => {
+        handlersRef.current.onSharingChanged?.(sharingEnabled, count);
       },
       onNoteSaved: (data) => {
         handlersRef.current.onNoteSaved?.(data);

@@ -8,6 +8,16 @@ export async function fetchNetworkInfo() {
   return res.json();
 }
 
+export async function setNetworkSharing(enabled) {
+  const res = await fetch('/api/network/sharing', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled }),
+  });
+  if (!res.ok) throw new Error('Failed to update network sharing state');
+  return res.json();
+}
+
 export async function fetchVaultTree() {
   const res = await fetch('/api/vault/tree');
   if (!res.ok) throw new Error('Failed to fetch vault tree');

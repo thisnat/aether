@@ -17,10 +17,10 @@ function startServer() {
 
   // Initialize core services
   const vaultService = new VaultService(config.vaultPath);
-  const networkService = new NetworkService(config.port, config.vaultPath);
+  const networkService = new NetworkService(config.port, config.vaultPath, config.share);
 
   const server = http.createServer();
-  const wsService = new WebSocketService(server);
+  const wsService = new WebSocketService(server, networkService);
   const watcherService = new WatcherService(config.vaultPath, wsService, vaultService);
 
   // Controllers
@@ -32,13 +32,14 @@ function startServer() {
     vaultController,
     networkController,
     config,
+    networkService,
   });
 
   server.on('request', app);
 
   server.listen(config.port, '0.0.0.0', () => {
     const { primaryIp } = getNetworkAddresses();
-    printStartupBanner(config.port, primaryIp);
+    printStartupBanner(config.port, primaryIp, networkService.isSharingEnabled);
   });
 
   // Graceful shutdown

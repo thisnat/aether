@@ -69,6 +69,15 @@ export class NetworkSocket {
         this.handlers.onPeerCount?.(data.count || 1);
         break;
 
+      case 'network:sharing':
+        this.handlers.onSharingChanged?.(data.sharingEnabled, data.peerCount);
+        if (data.peerCount) this.handlers.onPeerCount?.(data.peerCount);
+        break;
+
+      case 'network:disabled':
+        this.handlers.onNetworkDisabled?.(data.message);
+        break;
+
       case 'note:saved':
         this.handlers.onNoteSaved?.(data);
         break;

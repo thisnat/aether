@@ -1,9 +1,15 @@
 const { WebSocketServer } = require('ws');
+const { isLoopbackAddress } = require('../utils/network');
 
 class WebSocketService {
-  constructor(server) {
+  constructor(server, networkService = null) {
+    this.networkService = networkService;
     this.wss = new WebSocketServer({ server });
     this.setupListeners();
+  }
+
+  setNetworkService(networkService) {
+    this.networkService = networkService;
   }
 
   get peerCount() {
@@ -11,7 +17,27 @@ class WebSocketService {
   }
 
   setupListeners() {
-    this.wss.on('connection', (ws) => {
+    this.wss.on('connection', (ws, req) => {
+      const forwarded = req?.headers?.['x-forwarded-for'];
+      const remoteIp = forwarded ? forwarded.split(',')[0].trim() : req?.socket?.remoteAddress;
+      ws.remoteIp = remoteIp;
+      ws.isLocal = isLoopbackAddress(remoteIp);
+
+      // Deny non-local connections when network sharing is disabled
+      if (!ws.isLocal && this.networkService && !this.networkService.isSharingEnabled) {
+        try {
+          ws.send(
+            JSON.stringify({
+              type: 'network:disabled',
+              message: 'Local network sharing is disabled by host.',
+            })
+          );
+          ws.close(1008, 'Network sharing disabled');
+          ws.terminate();
+        } catch {}
+        return;
+      }
+
       ws.clientId = 'peer_' + Math.random().toString(36).substring(2, 9);
 
       // Send initial welcome & peer count
@@ -20,6 +46,7 @@ class WebSocketService {
           type: 'connected',
           clientId: ws.clientId,
           peerCount: this.peerCount,
+          sharingEnabled: this.networkService ? this.networkService.isSharingEnabled : false,
         })
       );
 
@@ -67,6 +94,31 @@ class WebSocketService {
     this.broadcast({
       type: 'peer:count',
       count: this.peerCount,
+    });
+  }
+
+  onSharingChanged(enabled) {
+    if (!enabled) {
+      for (const client of this.wss.clients) {
+        if (!client.isLocal) {
+          try {
+            client.send(
+              JSON.stringify({
+                type: 'network:disabled',
+                message: 'Host disabled local network sharing.',
+              })
+            );
+            client.close(1008, 'Network sharing disabled');
+            client.terminate();
+          } catch {}
+        }
+      }
+    }
+
+    this.broadcast({
+      type: 'network:sharing',
+      sharingEnabled: enabled,
+      peerCount: this.peerCount,
     });
   }
 

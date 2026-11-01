@@ -6,7 +6,7 @@ const child = spawn(process.execPath, ['server.js', '--port', String(PORT)], {
   stdio: ['ignore', 'pipe', 'pipe'],
 });
 
-function req(method, path, body = null) {
+function req(method, path, body = null, extraHeaders = {}) {
   return new Promise((resolve, reject) => {
     const postData = body ? JSON.stringify(body) : null;
     const options = {
@@ -17,6 +17,7 @@ function req(method, path, body = null) {
       headers: {
         'Content-Type': 'application/json',
         ...(postData ? { 'Content-Length': Buffer.byteLength(postData) } : {}),
+        ...extraHeaders,
       },
     };
     const r = http.request(options, (res) => {
@@ -55,9 +56,52 @@ async function waitForServer(maxAttempts = 30) {
     console.log('Waiting for Aether server on port ' + PORT + '...');
     await waitForServer();
 
-    console.log('1. Checking Network API endpoint...');
+    console.log('1. Checking Network API endpoint & sharing access control...');
     const netRes = await req('GET', '/api/network');
-    console.log('Network primary IP:', netRes.body.primaryIp, 'Peer count:', netRes.body.peerCount);
+    console.log(
+      'Network primary IP:',
+      netRes.body.primaryIp,
+      'Sharing enabled:',
+      netRes.body.sharingEnabled
+    );
+
+    if (netRes.body.sharingEnabled !== false) {
+      throw new Error('Network sharing should be disabled by default on startup');
+    }
+
+    // External simulated request should be blocked (403) while sharing is disabled
+    const blockedRes = await req('GET', '/api/network', null, {
+      'x-forwarded-for': '192.168.1.199',
+    });
+    if (blockedRes.status !== 403) {
+      throw new Error(
+        'Expected 403 for external request when sharing disabled, got ' + blockedRes.status
+      );
+    }
+
+    // Enable sharing
+    const enableRes = await req('POST', '/api/network/sharing', { enabled: true });
+    if (!enableRes.body.sharingEnabled) {
+      throw new Error('Failed to enable network sharing');
+    }
+
+    // External simulated request should now be allowed (200)
+    const allowedRes = await req('GET', '/api/network', null, {
+      'x-forwarded-for': '192.168.1.199',
+    });
+    if (allowedRes.status !== 200) {
+      throw new Error(
+        'Expected 200 for external request when sharing enabled, got ' + allowedRes.status
+      );
+    }
+
+    // Disable sharing again
+    const disableRes = await req('POST', '/api/network/sharing', { enabled: false });
+    if (disableRes.body.sharingEnabled !== false) {
+      throw new Error('Failed to disable network sharing');
+    }
+
+    console.log('✔ Network sharing access control verified.');
 
     console.log('2. Creating a new test note in vault...');
     const createRes = await req('POST', '/api/vault/file', {

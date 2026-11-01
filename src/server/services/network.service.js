@@ -2,10 +2,20 @@ const qrcode = require('qrcode');
 const { getNetworkAddresses } = require('../utils/network');
 
 class NetworkService {
-  constructor(port, vaultPath) {
+  constructor(port, vaultPath, initialSharing = false) {
     this.port = port;
     this.vaultPath = vaultPath;
+    this.sharingEnabled = Boolean(initialSharing);
     this.cachedInfo = null;
+  }
+
+  get isSharingEnabled() {
+    return this.sharingEnabled;
+  }
+
+  setSharing(enabled) {
+    this.sharingEnabled = Boolean(enabled);
+    return this.sharingEnabled;
   }
 
   async getNetworkInfo(peerCount = 1) {
@@ -41,6 +51,7 @@ class NetworkService {
 
     return {
       ...this.cachedInfo,
+      sharingEnabled: this.sharingEnabled,
       peerCount,
     };
   }

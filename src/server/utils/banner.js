@@ -16,7 +16,7 @@ function row(visibleContent, styledContent = visibleContent) {
 /**
  * Print the startup banner to the console with local/network links and QR code.
  */
-function printStartupBanner(port, networkIp) {
+function printStartupBanner(port, networkIp, sharingEnabled = false) {
   const localUrl = `http://localhost:${port}`;
   const networkUrl = `http://${networkIp}:${port}`;
 
@@ -49,8 +49,8 @@ function printStartupBanner(port, networkIp) {
   console.log(row(''));
   console.log(
     row(
-      '   Scan the QR code below on mobile to open notes instantly',
-      '   \x1b[90mScan the QR code below on mobile to open notes instantly\x1b[0m'
+      '   Scan the QR code below on mobile to open notes',
+      '   \x1b[90mScan the QR code below on mobile to open notes\x1b[0m'
     )
   );
   console.log(borderBottom + '\n');
@@ -62,14 +62,22 @@ function printStartupBanner(port, networkIp) {
         .map((line) => '    ' + line)
         .join('\n');
       console.log(indented);
-      console.log(
-        '\n    \x1b[90mReady & listening on 0.0.0.0:' + port + '. Press Ctrl+C to stop.\x1b[0m\n'
-      );
+
+      if (sharingEnabled) {
+        console.log(
+          '\n    \x1b[32m✔ Local network sharing is active.\x1b[0m \x1b[90mReady on ' +
+            networkUrl +
+            '. Press Ctrl+C to stop.\x1b[0m\n'
+        );
+      } else {
+        console.log(
+          '\n    \x1b[33m○ Network sharing currently off.\x1b[0m \x1b[90mEnable in app topbar to grant device access.\x1b[0m'
+        );
+        console.log('    \x1b[90mReady on ' + localUrl + '. Press Ctrl+C to stop.\x1b[0m\n');
+      }
     });
   } catch {
-    console.log(
-      '    \x1b[90mReady & listening on 0.0.0.0:' + port + '. Press Ctrl+C to stop.\x1b[0m\n'
-    );
+    console.log('    \x1b[90mReady & listening on ' + port + '. Press Ctrl+C to stop.\x1b[0m\n');
   }
 }
 
