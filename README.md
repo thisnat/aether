@@ -1,6 +1,6 @@
 # ▲ Aether
 
-> A minimal, distraction-free markdown note-taking app built with Node.js and React, focused on seamless local-network sharing and Obsidian-compatible `.md` file handling.
+> A minimal, distraction-free markdown note-taking app built with Node.js and React, focused on seamless local-network sharing, Obsidian-compatible `.md` file handling, and interactive node graph visualization.
 
 ---
 
@@ -22,17 +22,18 @@
   - **Interactive Checklists**: `- [ ]` and `- [x]` can be checked or unchecked directly inside the rendered preview, updating the raw markdown file automatically.
   - **Backlinks (Linked References)**: Automatically detects and displays other notes that link to the current note.
 
-- **🎨 Clean, Modern & Modular UI (React + Vite)**
-  - Modern typography and distraction-free workspace inspired by Obsidian, iA Writer, and Notion.
+- **🎨 JSON-Driven Theme Engine & Refined Workspace (React + Vite)**
+  - Developer- and mod-friendly theme architecture configured purely via JSON files in `src/client/themes/`.
+  - Built-in esoteric themes (`Tabula`, `Rhizome`, `Ephemera`) with distinct typography, borders, and graph color schemes.
+  - Topbar Theme Picker dropdown with color swatches, Light/Dark mode toggles, and instant `localStorage` persistence.
   - **Three Viewing Modes**:
     - `◫ Split`: Side-by-side live editor and rendered markdown preview with resizable divider.
     - `✏️ Edit`: Focused distraction-free markdown writing.
-    - `👁 Preview`: Clean reading mode with interactive checkboxes and backlinks.
+    - `👁 Preview`: Clean reading mode with interactive checkboxes, inline local graph, and backlinks.
   - **Markdown Toolbar & Smart Textarea**:
     - Tab / Shift+Tab for 2-space indentation and unindentation.
     - Automatic continuation of bullet lists `- `, numbered lists `1. `, and checklists `- [ ] `.
     - Syntax-highlighted code blocks with 1-click Copy button.
-  - **Dark & Light Modes**: Seamless toggle with persistent preference and matching syntax themes.
   - **Mobile Ready**: Fully responsive with slide-out navigation drawer for mobile browsers.
 
 - **🔍 Quick Switcher & Full-Text Search (`Ctrl + K` / `Ctrl + P`)**
@@ -67,41 +68,15 @@ _(Running `npm start` automatically builds the React client and launches the ser
 
 ---
 
-## 📁 Project Architecture & Folder Structure
+## 🎨 Theme System
 
-```
-aether/
-├── src/
-│   ├── server/                         # Modular Node.js / Express / WebSocket backend
-│   │   ├── config/                     # CLI flags & environment variables parser
-│   │   ├── controllers/                # Thin HTTP request adapters (vault, network)
-│   │   ├── routes/                     # Clean Express route declarations
-│   │   ├── services/                   # Business logic (vault filesystem, websockets, chokidar watcher)
-│   │   ├── utils/                      # Network IP resolution, startup banner, note seeder
-│   │   ├── app.js                      # Express configuration & static serving
-│   │   └── index.js                    # Server lifecycle & graceful shutdown
-│   │
-│   └── client/                         # Declarative, high-performance React + Vite frontend
-│       ├── components/
-│       │   ├── Header/                 # Topbar, breadcrumb, mode switcher, theme toggle
-│       │   ├── Sidebar/                # File tree, folders, notes, search trigger
-│       │   ├── Editor/                 # Note title input, markdown toolbar, smart textarea
-│       │   ├── Preview/                # Rendered markdown, task checkboxes, backlinks
-│       │   ├── Modals/                 # Network QR modal, Quick switcher (Ctrl+K), Prompts
-│       │   └── Common/                 # Status bar, resizer, toast notifications
-│       ├── hooks/                      # Custom hooks (useVault, useWebSocket, useTheme, useKeyboardShortcuts)
-│       ├── services/                   # REST API client & WebSocket client
-│       ├── utils/                      # Markdown parser, wikilinks, formatting stats
-│       ├── styles/                     # Modular CSS (variables, base, components, markdown)
-│       ├── App.jsx                     # Root application coordinator
-│       └── main.jsx                    # React entry point
-│
-├── dist/                               # Production-built client bundle (auto-generated)
-├── vault/                              # Plain markdown files (Obsidian-compatible)
-├── tests/                              # Automated integration tests
-├── server.js                           # Root entrypoint delegate
-└── vite.config.mjs                     # Vite build & proxy configuration
-```
+Aether features a JSON-driven theme architecture. Themes are defined as standalone JSON files in `src/client/themes/`, making it easy to tweak styles or add custom themes:
+
+- **Tabula**: A warm editorial workspace inspired by thoughtful publishing, featuring warm paper backgrounds, rounded geometry, and subtle amber accents.
+- **Rhizome**: Precision hypertext and network-archive styling with crisp borders, tabular contrast, and subtle node connections.
+- **Ephemera**: Stark typographic minimalism with brutalist monochrome borders, square geometry, and monospace metadata accents.
+
+Switch themes or toggle between Light and Dark mode anytime using the palette dropdown in the top header bar.
 
 ---
 
