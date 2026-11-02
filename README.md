@@ -64,7 +64,7 @@ npm run dev
 npm start
 ```
 
-_(Running `npm start` automatically builds the React client and launches the server)._
+_(Running `npm start` automatically checks if the client needs to be rebuilt, reusing existing build artifacts if source code is unchanged)._
 
 ---
 

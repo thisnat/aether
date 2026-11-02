@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && node scripts/build-if-needed.js --save-only",
+    "build:check": "node scripts/build-if-needed.js",
     "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm:dev:server\" \"npm:dev:client\"",
     "dev:server": "node --watch server.js",
     "dev:client": "vite",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prestart": "npm run build",
+    "prestart": "node scripts/build-if-needed.js",
     "start": "node server.js",
     "test": "node tests/test-crud.js"
   },
