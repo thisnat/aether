@@ -1574,11 +1574,6 @@
   box-shadow: 0 0 0 1px var(--border-color);
 }
 
-[data-theme='ephemera'] .theme-swatch,
-[data-theme='arena'] .theme-swatch {
-  border-radius: 0px;
-}
-
 .theme-option-info {
   display: flex;
   flex-direction: column;

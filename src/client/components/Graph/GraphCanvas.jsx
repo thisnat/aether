@@ -17,7 +17,7 @@ export function GraphCanvas({
   width = 600,
   height = 400,
   isDark = true,
-  theme = 'notion',
+  theme = 'tabula',
   interactive = true,
 }) {
   const canvasRef = useRef(null);
@@ -28,6 +28,7 @@ export function GraphCanvas({
   const animFrameRef = useRef(null);
   const alphaRef = useRef(1);
   const isRunningRef = useRef(false);
+  const runTickRef = useRef(null);
 
   // Transform (pan & zoom)
   const transformRef = useRef({ x: 0, y: 0, k: 1 });
@@ -75,12 +76,12 @@ export function GraphCanvas({
         };
   }, [theme, isDark]);
 
-  // Wake up simulation loop
+  // Wake up simulation loop (always calls latest runTickRef.current)
   const wakeSimulation = useCallback(() => {
     alphaRef.current = Math.max(alphaRef.current, 0.3);
     if (!isRunningRef.current) {
       isRunningRef.current = true;
-      runTick();
+      runTickRef.current?.();
     }
   }, []);
 
@@ -246,6 +247,11 @@ export function GraphCanvas({
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    if (colors.bg) {
+      ctx.fillStyle = colors.bg;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
     // Apply DPR & camera transforms
     ctx.scale(dpr, dpr);
     ctx.translate(t.x, t.y);
@@ -341,11 +347,13 @@ export function GraphCanvas({
 
     // Keep running if alpha is active
     if (alphaRef.current > 0.003 || draggedNodeRef.current) {
-      animFrameRef.current = requestAnimationFrame(runTick);
+      animFrameRef.current = requestAnimationFrame(() => runTickRef.current?.());
     } else {
       isRunningRef.current = false;
     }
   }, [width, height, activePath, colors]);
+
+  runTickRef.current = runTick;
 
   // Keep canvas sharp on resize / DPR change
   useEffect(() => {

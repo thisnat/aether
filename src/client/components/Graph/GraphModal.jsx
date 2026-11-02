@@ -9,7 +9,7 @@ export function GraphModal({
   activePath,
   onSelectNote,
   isDark = true,
-  theme = 'notion',
+  theme = 'tabula',
 }) {
   const [filterQuery, setFilterQuery] = useState('');
   const containerRef = useRef(null);

@@ -1,16 +1,10 @@
 import tabula from './tabula.json';
 import rhizome from './rhizome.json';
 import ephemera from './ephemera.json';
+import syzygy from './syzygy.json';
 
 // Built-in esoteric themes loaded from JSON specifications
-export const BUILTIN_THEMES = [tabula, rhizome, ephemera];
-
-// Legacy alias map to guarantee 100% backward compatibility
-const LEGACY_ALIASES = {
-  notion: 'tabula',
-  roam: 'rhizome',
-  arena: 'ephemera',
-};
+export const BUILTIN_THEMES = [tabula, rhizome, ephemera, syzygy];
 
 /**
  * Retrieve any custom modded themes saved in localStorage
@@ -44,12 +38,11 @@ export function getAllThemes() {
 }
 
 /**
- * Resolve theme definition by ID (supporting legacy identifiers)
+ * Resolve theme definition by ID
  */
 export function getTheme(id) {
-  const resolvedId = LEGACY_ALIASES[id] || id;
   const all = getAllThemes();
-  return all.find((t) => t.id === resolvedId) || tabula;
+  return all.find((t) => t.id === id) || tabula;
 }
 
 /**
@@ -74,7 +67,9 @@ export function generateCssVariables(theme, mode = 'dark') {
   const r = theme.radii || {};
 
   return `
-:root {
+:root,
+[data-theme='${theme.id}'],
+[data-theme='${theme.id}'][data-mode='${mode}'] {
   --font-ui: ${t.fontUi || 'Arial, -apple-system, BlinkMacSystemFont, sans-serif'};
   --font-title: ${t.fontTitle || t.fontUi || 'inherit'};
   --font-mono: ${t.fontMono || "'SF Mono', Menlo, Monaco, monospace"};

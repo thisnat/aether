@@ -5,20 +5,12 @@ export { getAllThemes, getTheme, registerTheme } from '../themes';
 
 export function useTheme() {
   const [themeId, setThemeId] = useState(() => {
-    const saved = localStorage.getItem('aether_theme_id');
-    // Map legacy ids if needed
-    if (saved === 'notion') return 'tabula';
-    if (saved === 'roam') return 'rhizome';
-    if (saved === 'arena') return 'ephemera';
-    return saved || 'tabula';
+    return localStorage.getItem('aether_theme_id') || 'tabula';
   });
 
   const [colorMode, setColorMode] = useState(() => {
     const saved = localStorage.getItem('aether_color_mode');
-    if (saved === 'dark' || saved === 'light') return saved;
-    const legacy = localStorage.getItem('aether_theme');
-    if (legacy === 'dark' || legacy === 'light') return legacy;
-    return 'dark';
+    return saved === 'dark' || saved === 'light' ? saved : 'dark';
   });
 
   const availableThemes = useMemo(() => {
@@ -32,7 +24,6 @@ export function useTheme() {
   useEffect(() => {
     localStorage.setItem('aether_theme_id', themeId);
     localStorage.setItem('aether_color_mode', colorMode);
-    localStorage.setItem('aether_theme', colorMode);
 
     // Apply JSON-driven CSS variables and data attributes
     applyTheme(activeTheme, colorMode);

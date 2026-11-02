@@ -47,11 +47,12 @@ function getSourceFiles() {
 }
 
 /**
- * Compute deterministic SHA-256 hash of all source files.
+ * Compute deterministic SHA-256 hash of all source files with individual file hashes.
  * Normalizes relative paths with forward slashes for cross-platform consistency.
  */
-function computeSourceHash(files) {
-  const hash = crypto.createHash('sha256');
+function computeSourceManifest(files) {
+  const fileHashMap = {};
+  const overallHash = crypto.createHash('sha256');
 
   // Sort files deterministically by normalized relative path
   const sortedFiles = [...files].sort((a, b) => {
@@ -62,11 +63,53 @@ function computeSourceHash(files) {
 
   for (const file of sortedFiles) {
     const relPath = path.relative(PROJECT_ROOT, file).replace(/\\/g, '/');
-    hash.update(relPath);
-    hash.update(fs.readFileSync(file));
+    const content = fs.readFileSync(file);
+    const fileHash = crypto.createHash('sha256').update(content).digest('hex').slice(0, 16);
+
+    fileHashMap[relPath] = fileHash;
+    overallHash.update(relPath);
+    overallHash.update(content);
   }
 
-  return hash.digest('hex');
+  return {
+    overallHash: overallHash.digest('hex'),
+    fileHashMap,
+  };
+}
+
+/**
+ * Parse stored build metadata (supports JSON metadata and legacy raw hash strings).
+ */
+function readStoredMetadata() {
+  if (!fs.existsSync(HASH_FILE)) return null;
+  try {
+    const content = fs.readFileSync(HASH_FILE, 'utf8').trim();
+    if (content.startsWith('{')) {
+      return JSON.parse(content);
+    }
+    // Legacy plain hash string
+    return { hash: content, builtAt: null, files: null };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Save build metadata to dist/.build-hash.
+ */
+function saveBuildMetadata(overallHash, fileHashMap) {
+  try {
+    if (!fs.existsSync(DIST_DIR)) return;
+    const meta = {
+      hash: overallHash,
+      builtAt: new Date().toISOString(),
+      fileCount: Object.keys(fileHashMap).length,
+      files: fileHashMap,
+    };
+    fs.writeFileSync(HASH_FILE, JSON.stringify(meta, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('[aether] Warning: Failed to save build metadata:', err.message);
+  }
 }
 
 /**
@@ -91,26 +134,52 @@ function checkBuildStatus() {
   }
 
   const sourceFiles = getSourceFiles();
-  const currentHash = computeSourceHash(sourceFiles);
+  const { overallHash, fileHashMap } = computeSourceManifest(sourceFiles);
+  const storedMeta = readStoredMetadata();
 
-  // If stored hash exists, compare with current source hash
-  if (fs.existsSync(HASH_FILE)) {
-    try {
-      const storedHash = fs.readFileSync(HASH_FILE, 'utf8').trim();
-      if (storedHash === currentHash) {
-        return { needed: false, hash: currentHash };
-      }
+  // If stored metadata exists, compare overall hash and detect exact changed files
+  if (storedMeta) {
+    if (storedMeta.hash === overallHash) {
       return {
-        needed: true,
-        reason: 'Source code or configuration has changed',
-        hash: currentHash,
+        needed: false,
+        overallHash,
+        fileHashMap,
+        builtAt: storedMeta.builtAt,
       };
-    } catch {
-      return { needed: true, reason: 'Could not read build hash', hash: currentHash };
     }
+
+    // Detect changed files for helpful logging
+    const changed = [];
+    if (storedMeta.files) {
+      for (const [file, hash] of Object.entries(fileHashMap)) {
+        if (!storedMeta.files[file]) {
+          changed.push(`Added: ${file}`);
+        } else if (storedMeta.files[file] !== hash) {
+          changed.push(`Modified: ${file}`);
+        }
+      }
+      for (const file of Object.keys(storedMeta.files)) {
+        if (!fileHashMap[file]) {
+          changed.push(`Deleted: ${file}`);
+        }
+      }
+    }
+
+    const reason =
+      changed.length > 0
+        ? changed.slice(0, 2).join(', ') +
+          (changed.length > 2 ? ` (+${changed.length - 2} more)` : '')
+        : 'Source code or configuration has changed';
+
+    return {
+      needed: true,
+      reason,
+      overallHash,
+      fileHashMap,
+    };
   }
 
-  // Fallback: If hash file does not exist, compare source mtime vs dist/index.html mtime
+  // Fallback: If metadata file does not exist, compare source mtimes vs dist/index.html mtime
   const distMtime = fs.statSync(DIST_INDEX).mtimeMs;
   let newestSource = null;
   let newestMtime = 0;
@@ -128,16 +197,14 @@ function checkBuildStatus() {
     return {
       needed: true,
       reason: `Source file ${rel} is newer than dist artifact`,
-      hash: currentHash,
+      overallHash,
+      fileHashMap,
     };
   }
 
-  // dist is newer than all sources; write the hash for future instant checks
-  try {
-    fs.writeFileSync(HASH_FILE, currentHash, 'utf8');
-  } catch {}
-
-  return { needed: false, hash: currentHash };
+  // dist is newer than all sources; record metadata for future instant checks
+  saveBuildMetadata(overallHash, fileHashMap);
+  return { needed: false, overallHash, fileHashMap, builtAt: new Date(distMtime).toISOString() };
 }
 
 /**
@@ -182,32 +249,30 @@ function buildClient() {
 function main() {
   const saveOnly = process.argv.includes('--save-only');
   const sourceFiles = getSourceFiles();
-  const currentHash = computeSourceHash(sourceFiles);
+  const { overallHash, fileHashMap } = computeSourceManifest(sourceFiles);
 
   if (saveOnly) {
-    if (fs.existsSync(DIST_DIR)) {
-      fs.writeFileSync(HASH_FILE, currentHash, 'utf8');
-    }
+    saveBuildMetadata(overallHash, fileHashMap);
     return;
   }
 
   const status = checkBuildStatus();
 
   if (!status.needed) {
-    console.log('[aether] Client build is up to date. Reusing existing artifact in dist/.');
+    const timeDetail = status.builtAt
+      ? `built ${new Date(status.builtAt).toLocaleTimeString()}`
+      : 'already built';
+    console.log(
+      `[aether] Client build is up to date (${timeDetail}). Reusing existing artifact in dist/.`
+    );
     return;
   }
 
   console.log(`[aether] Client build needed (${status.reason}).`);
   buildClient();
 
-  // Save the hash of the built sources
-  try {
-    fs.writeFileSync(HASH_FILE, currentHash, 'utf8');
-    console.log('[aether] ✓ Build complete. Hash recorded for fast startup.\n');
-  } catch (err) {
-    console.warn('[aether] Warning: Failed to save build hash:', err.message);
-  }
+  saveBuildMetadata(status.overallHash || overallHash, status.fileHashMap || fileHashMap);
+  console.log('[aether] ✓ Build complete. Metadata recorded for fast startup.\n');
 }
 
 main();

@@ -75,6 +75,7 @@ Aether features a JSON-driven theme architecture. Themes are defined as standalo
 - **Tabula**: A warm editorial workspace inspired by thoughtful publishing, featuring warm paper backgrounds, rounded geometry, and subtle amber accents.
 - **Rhizome**: Precision hypertext and network-archive styling with crisp borders, tabular contrast, and subtle node connections.
 - **Ephemera**: Stark typographic minimalism with brutalist monochrome borders, square geometry, and monospace metadata accents.
+- **Syzygy**: Cybernetic occulture inspired by the CCRU 1999 archive (ccru.net/syzygy.htm), featuring pure void black (#000000), signature wave ochre accents (#BEBE7E), concrete grey panels, and dense technical grids.
 
 Switch themes or toggle between Light and Dark mode anytime using the palette dropdown in the top header bar.
 

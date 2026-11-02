@@ -8,7 +8,7 @@ export function PreviewPane({
   activeNote,
   graphData,
   isDark = true,
-  theme = 'notion',
+  theme = 'tabula',
   onToggleCheckbox,
   onWikilinkClick,
   onSelectNote,

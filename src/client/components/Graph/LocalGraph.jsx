@@ -8,7 +8,7 @@ export function LocalGraph({
   onSelectNote,
   onOpenGlobalGraph,
   isDark = true,
-  theme = 'notion',
+  theme = 'tabula',
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const containerRef = useRef(null);

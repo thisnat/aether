@@ -73,7 +73,10 @@ export function ThemePicker({
                   <div className="theme-option-left">
                     <span
                       className="theme-swatch"
-                      style={{ backgroundColor: t.accentColor }}
+                      style={{
+                        backgroundColor: t.accentColor,
+                        borderRadius: t.radii?.xs === '0px' ? '0px' : '50%',
+                      }}
                       aria-hidden="true"
                     />
                     <div className="theme-option-info">

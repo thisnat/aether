@@ -227,7 +227,6 @@
   background: rgba(0, 0, 0, 0.01);
 }
 
-[data-theme='dark'] .markdown-body tr:nth-child(even) td,
 [data-mode='dark'] .markdown-body tr:nth-child(even) td {
   background: rgba(255, 255, 255, 0.02);
 }
