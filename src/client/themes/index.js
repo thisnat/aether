@@ -2,9 +2,10 @@ import tabula from './tabula.json';
 import rhizome from './rhizome.json';
 import ephemera from './ephemera.json';
 import syzygy from './syzygy.json';
+import sylva from './sylva.json';
 
 // Built-in esoteric themes loaded from JSON specifications
-export const BUILTIN_THEMES = [tabula, rhizome, ephemera, syzygy];
+export const BUILTIN_THEMES = [tabula, rhizome, ephemera, syzygy, sylva];
 
 /**
  * Retrieve any custom modded themes saved in localStorage

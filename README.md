@@ -24,7 +24,7 @@
 
 - **🎨 JSON-Driven Theme Engine & Refined Workspace (React + Vite)**
   - Developer- and mod-friendly theme architecture configured purely via JSON files in `src/client/themes/`.
-  - Built-in esoteric themes (`Tabula`, `Rhizome`, `Ephemera`) with distinct typography, borders, and graph color schemes.
+  - Built-in themes (`Tabula`, `Rhizome`, `Ephemera`) with distinct typography, borders, and graph color schemes.
   - Topbar Theme Picker dropdown with color swatches, Light/Dark mode toggles, and instant `localStorage` persistence.
   - **Three Viewing Modes**:
     - `◫ Split`: Side-by-side live editor and rendered markdown preview with resizable divider.
